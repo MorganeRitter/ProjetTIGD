@@ -1,2 +1,5 @@
 libtim/doc
 libtim/Examples
+.vscode
+*.out
+bin
