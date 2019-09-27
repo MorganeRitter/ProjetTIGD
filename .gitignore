@@ -3,3 +3,4 @@ libtim/Examples
 .vscode
 *.out
 bin
+TOS.*
