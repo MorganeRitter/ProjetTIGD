@@ -32,6 +32,12 @@ template <typename T>
 void SVMCell<T>::min(T min) { m_min = min; }
 template <typename T>
 void SVMCell<T>::max(T max) { m_max = max; }
+template <typename T>
+void SVMCell<T>::visited(bool visited) { m_visited = visited; }
+template <typename T>
+void SVMCell<T>::posX(int x) { m_x = x; }
+template <typename T>
+void SVMCell<T>::posY(int y) { m_y = y; }
 
 template <typename T>
 CellType SVMCell<T>::type() const { return m_type; }
@@ -41,3 +47,9 @@ template <typename T>
 T SVMCell<T>::min() const { return m_min; }
 template <typename T>
 T SVMCell<T>::max() const { return m_max; }
+template <typename T>
+bool SVMCell<T>::visited() const { return m_visited; }
+template <typename T>
+int SVMCell<T>::posX() const { return m_x; }
+template <typename T>
+int SVMCell<T>::posY() const { return m_y; }

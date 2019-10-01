@@ -19,14 +19,22 @@ public:
     inline void value(T value);
     inline void min(T min);
     inline void max(T max);
+    inline void visited(bool visited);
+    inline void posX(int x);
+    inline void posY(int y);
 
     inline CellType type() const;
     inline T value() const;
     inline T min() const;
     inline T max() const;
+    inline bool visited() const;
+    inline int posX() const;
+    inline int posY() const;
 
 private:
     CellType m_type;
+    bool m_visited;
+    int m_x, m_y;
     union {
         struct
         {
