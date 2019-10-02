@@ -163,6 +163,12 @@ void SVMImage<T>::interpolate()
     m_image = i_img;
 }
 
+template <typename T>
+SVMCell<T> &SVMImage<T>::operator()(int i, int j) const
+{
+    return m_image.at(i).at(j);
+}
+
 template class SVMImage<int>;
 template class SVMImage<unsigned int>;
 template class SVMImage<char>;

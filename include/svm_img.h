@@ -21,7 +21,7 @@ private:
     void interpolate();
 
     // getter for a pixel @ pos [i,j]
-    SVMCell<T> &operator()(int i, int j);
+    SVMCell<T> &operator()(int i, int j) const;
 
 private:
     void constructSVMImage();
