@@ -38,6 +38,40 @@ SVMCell<T> *PQueue<T>::pop(std::size_t level)
 }
 
 template <typename T>
+void PQueue<T>::priority_push(SVMCell<T> *cell, std::size_t level) {
+    std::size_t lower;
+    std::size_t upper;
+    std::size_t levelToPush;
+
+    if(cell->type() == CellType::Inter2 || cell->type() == CellType::Inter4) {
+        lower = static_cast<std::size_t>(cell->min());
+        upper = static_cast<std::size_t>(cell->max());
+    } else {
+        lower = static_cast<std::size_t>(cell->value());
+        upper = static_cast<std::size_t>(cell->value());
+    }
+
+    if(lower > level) {
+        levelToPush = lower;
+    } else if (upper < level) {
+        levelToPush = upper;
+    } else {
+        levelToPush = level;
+    }
+
+    push(cell, levelToPush);
+}
+
+template <typename T>
+SVMCell<T> *PQueue<T>::priority_pop(std::size_t level) {
+    std::size_t currentLevel = level;
+    while(m_pqueue[currentLevel].size() == 0) {
+        currentLevel = (currentLevel + 1) % m_pqueue.size();
+    }
+    return (pop(currentLevel));
+}
+
+template <typename T>
 std::size_t PQueue<T>::size() const
 {
     return m_pqueue.size();

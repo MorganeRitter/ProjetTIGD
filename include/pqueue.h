@@ -17,6 +17,11 @@ public:
     // pop the cell at <level> and returns it
     SVMCell<T> *pop(std::size_t level);
 
+    // push <cell> in queue, with level <level> used to find definitive level
+    void priority_push(SVMCell<T> *cell, std::size_t level);
+    // pop the next cell to handle, with level <level> used to find the next one to read 
+    SVMCell<T> *priority_pop(std::size_t level);
+
     // get the number of queues up to the last non-empty queue
     std::size_t size() const;
     // check if the PQueue is empty

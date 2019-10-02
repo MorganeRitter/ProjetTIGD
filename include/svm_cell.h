@@ -1,6 +1,8 @@
 #ifndef SVM_CELL_H
 #define SVM_CELL_H
 
+#include <cstddef> // for size_t
+
 enum CellType
 {
     Original,
@@ -24,6 +26,7 @@ public:
     inline void visited(bool visited);
     inline void posX(int x);
     inline void posY(int y);
+    inline void level(std::size_t l);
 
     // getters
     inline CellType type() const;
@@ -33,10 +36,12 @@ public:
     inline bool visited() const;
     inline int posX() const;
     inline int posY() const;
+    inline std::size_t level() const;
 
 private:
     CellType m_type; // type of the cell, determine if m_value or m_in/m_max is used
     bool m_visited;  // if the cell as been visited (see tos generation algorithm)
+    std::size_t m_level; // memorization of the level where the queue handled the face
     int m_x, m_y;    // cell coordinates in the SVMImage
     union {
         struct

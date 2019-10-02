@@ -3,13 +3,14 @@
 
 #include "pqueue.h"
 #include "svm_img.h"
+#include <vector>
 
 template <typename T>
 class TOS
 {
 public:
     TOS();
-    void genTree(SVMImage<T> img);
+    std::vector<SVMCell<T>*> sort(const SVMImage<T> &img);
 
 private:
 };
