@@ -41,6 +41,11 @@ void SVMImage<T>::extend()
                 SVMCell<T> cell(CellType::Original, median);
                 e_img.at(i).push_back(cell);
             }
+            else
+            {
+                SVMCell<T> cell(CellType::Original, m_original(i, j));
+                e_img.at(i).push_back(cell);
+            }
         }
     }
     m_image = e_img;
