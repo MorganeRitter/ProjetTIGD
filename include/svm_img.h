@@ -25,7 +25,8 @@ private:
 
 private:
     void constructSVMImage();
-    std::vector<std::vector<SVMCell<T>>> m_image;
+    std::vector<std::vector<SVMCell<T>>> m_image; // as [x,y]
+    LibTIM::Image<T> m_original;
 };
 
 #endif
