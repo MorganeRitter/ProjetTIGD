@@ -54,16 +54,16 @@ void SVMImage<T>::extend()
 template <typename T>
 void SVMImage<T>::interpolate()
 {
-    std::vector<std::vector<SVMCell<T>>> e_img;
+    std::vector<std::vector<SVMCell<T>>> i_img;
 
     std::size_t n = m_image.size();
     std::size_t m = m_image.at(0).size();
 
     std::size_t nbCol = 2 * (n * 2 - 1) - 1;
-    std::size_t nbLigne = 2 * (m * 2 - 1) - 1;
+    std::size_t nbLine = 2 * (m * 2 - 1) - 1;
 
     // fill old pixels
-    for (unsigned int l = 0; l < nbLigne; l += 4)
+    for (unsigned int l = 0; l < nbLine; l += 4)
     {
         for (unsigned int c = 0; c < nbCol; c += 4)
         {
@@ -71,102 +71,96 @@ void SVMImage<T>::interpolate()
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
-            e_img.at(l).at(c) = cell;
+            i_img.at(l).at(c) = cell;
         }
     }
 
     // fill new pixels : lines
-    for (unsigned int l = 0; l < nbLigne; l += 4)
+    for (unsigned int l = 0; l < nbLine; l += 4)
     {
         for (unsigned int c = 2; c < nbCol; c += 4)
         {
-            SVMCell<T> cell(CellType::New, std::max(e_img.at(l).at(c - 2).value(), e_img.at(l).at(c + 2).value()));
+            SVMCell<T> cell(CellType::New, std::max(i_img.at(l).at(c - 2).value(), i_img.at(l).at(c + 2).value()));
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
-            e_img.at(l).at(c) = cell;
+            i_img.at(l).at(c) = cell;
         }
     }
 
-    // Pas de out of range, on s'arrête à nbLigne-2 puisqu'on fait c+=4 et qu'on commence à 2
+    // Pas de out of range, on s'arrête à nbLine-2 puisqu'on fait c+=4 et qu'on commence à 2
 
     // fill new pixels : columns
     for (unsigned int c = 0; c < nbCol; c += 4)
     {
-        for (unsigned int l = 2; l < nbLigne; l += 4)
+        for (unsigned int l = 2; l < nbLine; l += 4)
         {
-            SVMCell<T> cell(CellType::New, std::max(e_img.at(l - 2).at(c).value(), e_img.at(l + 2).at(c).value()));
+            SVMCell<T> cell(CellType::New, std::max(i_img.at(l - 2).at(c).value(), i_img.at(l + 2).at(c).value()));
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
-            e_img.at(l).at(c) = cell;
+            i_img.at(l).at(c) = cell;
         }
     }
 
     // fill the remaining values
     // ordre de parcours arbitraire
-    for (unsigned int l = 2; l < nbLigne; l += 4)
+    for (unsigned int l = 2; l < nbLine; l += 4)
     {
         for (unsigned int c = 2; c < nbCol; c += 4)
         {
-            T m = std::max(std::max(e_img.at(l - 2).at(c).value(), e_img.at(l + 2).at(c).value()),
-                           std::max(e_img.at(l).at(c - 2).value(), e_img.at(l).at(c + 2).value()));
+            T m = std::max(std::max(i_img.at(l - 2).at(c).value(), i_img.at(l + 2).at(c).value()),
+                           std::max(i_img.at(l).at(c - 2).value(), i_img.at(l).at(c + 2).value()));
             SVMCell<T> cell(CellType::New, m);
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
-            e_img.at(l).at(c) = cell;
+            i_img.at(l).at(c) = cell;
         }
     }
 
     // fill the interpixels
 
-    for (unsigned int l = 0; l < nbLigne; l += 2)
+    for (unsigned int l = 0; l < nbLine; l += 2)
     {
         for (unsigned int c = 1; c < nbCol; c += 2)
         {
-            SVMCell<T> cell(CellType::Inter2, std::max(e_img.at(l).at(c - 1).value(), e_img.at(l).at(c + 1).value()));
+            SVMCell<T> cell(CellType::Inter2, std::max(i_img.at(l).at(c - 1).value(), i_img.at(l).at(c + 1).value()));
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
-            e_img.at(l).at(c) = cell;
+            i_img.at(l).at(c) = cell;
         }
     }
 
     for (unsigned int c = 0; c < nbCol; c += 2)
     {
-        for (unsigned int l = 1; l < nbLigne; l += 2)
+        for (unsigned int l = 1; l < nbLine; l += 2)
         {
-            SVMCell<T> cell(CellType::Inter2, std::max(e_img.at(l - 1).at(c).value(), e_img.at(l + 1).at(c).value()));
+            SVMCell<T> cell(CellType::Inter2, std::max(i_img.at(l - 1).at(c).value(), i_img.at(l + 1).at(c).value()));
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
-            e_img.at(l).at(c) = cell;
+            i_img.at(l).at(c) = cell;
         }
     }
 
     // parcours arbitraire
-    for (unsigned int l = 1; l < nbLigne; l += 2)
+    for (unsigned int l = 1; l < nbLine; l += 2)
     {
         for (unsigned int c = 1; c < nbCol; c += 2)
         {
-            T m = std::max(std::max(e_img.at(l - 1).at(c).value(), e_img.at(l + 1).at(c).value()),
-                           std::max(e_img.at(l).at(c - 1).value(), e_img.at(l).at(c + 1).value()));
+            T m = std::max(std::max(i_img.at(l - 1).at(c).value(), i_img.at(l + 1).at(c).value()),
+                           std::max(i_img.at(l).at(c - 1).value(), i_img.at(l).at(c + 1).value()));
             SVMCell<T> cell(CellType::Inter4, m);
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
-            e_img.at(l).at(c) = cell;
+            i_img.at(l).at(c) = cell;
         }
     }
 
-    m_image = e_img;
-}
-
-template <typename T>
-SVMCell<T> &SVMImage<T>::operator()(int i, int j)
-{
-    return m_image.at(i).at(j);
+    m_image = i_img;
 }
 
 template class SVMImage<int>;
