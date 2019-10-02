@@ -16,7 +16,12 @@ public:
     SVMCell<T> &pop(int level);
 
     bool empty() const;
+    bool levelIsEmpty() const;
 
+    /*debug:
+    Pqueue pq;
+    std:cout << pqueue << std::endl;
+    */
     friend std::ostream &operator<<(std::ostream &o, const PQueue &pq);
 
 private:
