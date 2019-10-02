@@ -8,6 +8,7 @@ PQueue<T>::PQueue()
 template <typename T>
 void PQueue<T>::push(SVMCell<T> *cell, std::size_t level)
 {
+    // if the queue does not exist yet
     if (level >= m_pqueue.size())
     {
         for (std::size_t l = m_pqueue.size(); l < level + 1; l++)
@@ -22,8 +23,12 @@ void PQueue<T>::push(SVMCell<T> *cell, std::size_t level)
 template <typename T>
 SVMCell<T> *PQueue<T>::pop(std::size_t level)
 {
+    // retrieve the front element
     SVMCell<T> *cell = m_pqueue.at(level).front();
+    // delete the front element
     m_pqueue.at(level).pop_front();
+
+    // delete the queue if it is last & empty
     if (m_pqueue.at(level).empty() && level == m_pqueue.size() - 1)
     {
         m_pqueue.pop_back();
