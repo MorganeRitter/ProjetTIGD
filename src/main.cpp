@@ -1,3 +1,5 @@
+#include "pqueue.h"
+#include "svm_cell.h"
 #include <Common/Image.h>
 #include <iostream>
 
@@ -6,6 +8,15 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+
+    PQueue<int> pq;
+
+    pq.push(new SVMCell<int>(CellType::Original, 1), 2);
+    pq.push(new SVMCell<int>(CellType::Original, 3), 0);
+    pq.push(new SVMCell<int>(CellType::Original, 4), 0);
+    pq.pop(0);
+
+    std::cout << pq << " | " << (pq.empty() == true ? "true" : "false") << std::endl;
 
     if (argc != 2)
     {
