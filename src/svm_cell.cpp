@@ -53,3 +53,12 @@ template <typename T>
 int SVMCell<T>::posX() const { return m_x; }
 template <typename T>
 int SVMCell<T>::posY() const { return m_y; }
+
+template class SVMCell<int>;
+template class SVMCell<unsigned int>;
+template class SVMCell<char>;
+template class SVMCell<unsigned char>;
+template class SVMCell<long>;
+template class SVMCell<unsigned long>;
+template class SVMCell<float>;
+template class SVMCell<double>;
