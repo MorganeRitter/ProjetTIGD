@@ -13,6 +13,7 @@ public:
 
     std::vector<SVMCell<T> &> &getByType(CellType type);
 
+private:
     // add 1 pixel at the border of value median(Image)
     void extend();
 
