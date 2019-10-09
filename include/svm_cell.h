@@ -27,6 +27,8 @@ public:
     inline void posX(int x);
     inline void posY(int y);
     inline void level(std::size_t l);
+    inline void parent(SVMCell<T> *parent);
+    inline void zpar(SVMCell<T> *zpar);
 
     // getters
     inline CellType type() const;
@@ -37,12 +39,20 @@ public:
     inline int posX() const;
     inline int posY() const;
     inline std::size_t level() const;
+    inline SVMCell<T> *parent() const;
+    inline SVMCell<T> *zpar() const;
 
 private:
-    CellType m_type; // type of the cell, determine if m_value or m_in/m_max is used
-    bool m_visited;  // if the cell as been visited (see tos generation algorithm)
+    // iage interpolation
+    CellType m_type;     // type of the cell, determine if m_value or m_in/m_max is used
+    bool m_visited;      // if the cell as been visited
     std::size_t m_level; // memorization of the level where the queue handled the face
-    int m_x, m_y;    // cell coordinates in the SVMImage
+    int m_x, m_y;        // cell coordinates in the SVMImage
+
+    // tree generation
+    SVMCell<T> *m_parent;
+    SVMCell<T> *m_zpar;
+
     union {
         struct
         {

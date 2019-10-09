@@ -40,6 +40,10 @@ template <typename T>
 void SVMCell<T>::posY(int y) { m_y = y; }
 template <typename T>
 void SVMCell<T>::level(std::size_t l) { m_level = l; }
+template <typename T>
+inline void SVMCell<T>::parent(SVMCell<T> *parent) { m_parent = parent; }
+template <typename T>
+inline void SVMCell<T>::zpar(SVMCell<T> *zpar) { m_zpar = z_par; }
 
 template <typename T>
 CellType SVMCell<T>::type() const { return m_type; }
@@ -57,6 +61,10 @@ template <typename T>
 int SVMCell<T>::posY() const { return m_y; }
 template <typename T>
 std::size_t SVMCell<T>::level() const { return m_level; }
+template <typename T>
+inline SVMCell<T> *SVMCell<T>::parent() const { return m_parent; }
+template <typename T>
+inline SVMCell<T> *SVMCell<T>::zpar() const { return m_zpar; }
 
 template class SVMCell<int>;
 template class SVMCell<unsigned int>;
