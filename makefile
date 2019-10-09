@@ -26,9 +26,9 @@ DEPS = $(OBJECTS:.o=.d)
 COMPILE_FLAGS = -std=c++11
 RELEASE_FLAGS = -o2
 DEBUG_FLAGS = -Wall -Wextra -g
-INCLUDES = -I include/ -I /usr/local/include -I/usr/include -I libtim/
+INCLUDES = -I include/ -I /usr/local/include -I/usr/include -I libtim/ -I SFML/include
 # Space-separated pkg-config libraries used by this project
-LIBS = 
+LIBS = -LSFML/lib/ -lsfml-graphics -lsfml-window -lsfml-system
 
 .PHONY: default_target
 default_target: debug
