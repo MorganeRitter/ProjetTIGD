@@ -43,7 +43,7 @@ void SVMCell<T>::level(std::size_t l) { m_level = l; }
 template <typename T>
 inline void SVMCell<T>::parent(SVMCell<T> *parent) { m_parent = parent; }
 template <typename T>
-inline void SVMCell<T>::zpar(SVMCell<T> *zpar) { m_zpar = z_par; }
+inline void SVMCell<T>::zpar(SVMCell<T> *zpar) { m_zpar = zpar; }
 
 template <typename T>
 CellType SVMCell<T>::type() const { return m_type; }
