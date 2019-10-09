@@ -9,10 +9,14 @@ template <typename T>
 class TOS
 {
 public:
-    TOS();
-    std::vector<SVMCell<T>*> sort(const SVMImage<T> &img);
+    TOS(const SVMImage<T> &img);
+    SVMCell<T> *unionFind();
+    SVMCell<T> *findRoot();
+    std::vector<SVMCell<T> *> computeTree();
+    std::vector<SVMCell<T> *> sort();
 
 private:
+    SVMImage<T> &m_image;
 };
 
 #endif // TOS_H
