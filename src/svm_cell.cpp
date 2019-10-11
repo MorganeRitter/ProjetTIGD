@@ -1,6 +1,11 @@
 #include "svm_cell.h"
 
 template <typename T>
+SVMCell<T>::SVMCell()
+{
+}
+
+template <typename T>
 SVMCell<T>::SVMCell(CellType type, T a, T b) : m_type(type)
 {
     switch (m_type)

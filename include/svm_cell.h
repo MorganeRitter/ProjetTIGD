@@ -16,6 +16,7 @@ template <typename T>
 class SVMCell
 {
 public:
+    SVMCell();
     SVMCell(CellType t, T a, T b = 0);
 
     // setters
