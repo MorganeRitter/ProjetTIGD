@@ -14,7 +14,7 @@ public:
 
     std::vector<SVMCell<T> &> &getByType(CellType type);
     // read only public acces to image data
-    sf::Image asSFImage() const;
+    const std::vector<std::vector<SVMCell<T>>> &data() const;
 
 private:
     // add 1 pixel at the border of value median(Image)
