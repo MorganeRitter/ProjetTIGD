@@ -10,8 +10,10 @@ class TOS
 {
 public:
     TOS(const SVMImage<T> &img);
-    SVMCell<T> *unionFind();
-    SVMCell<T> *findRoot();
+
+    // R comes from sort
+    SVMCell<T> *unionFind(std::vector<SVMCell<T> *> R);
+    SVMCell<T> *findRoot(SVMCell<T> *current);
     std::vector<SVMCell<T> *> computeTree();
     std::vector<SVMCell<T> *> sort();
 
