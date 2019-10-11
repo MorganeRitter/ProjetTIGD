@@ -170,34 +170,9 @@ void SVMImage<T>::interpolate()
 }
 
 template <typename T>
-sf::Image SVMImage<T>::asSFImage() const
+const std::vector<std::vector<SVMCell<T>>> &SVMImage<T>::data() const
 {
-    sf::Image img;
-    img.create(m_image.at(0).size(), m_image.size());
-    int j = 0;
-    std::cout << "size of image:" << m_image.at(0).size() << ", " << m_image.size() << std::endl;
-    for (auto row : m_image)
-    {
-        int i = 0;
-        for (SVMCell<T> cell : row)
-        {
-            if (cell.type() == CellType::Original || cell.type() == CellType::New)
-            {
-                sf::Uint8 val = static_cast<sf::Uint8>(cell.value());
-                sf::Color col(val, val, val);
-                img.setPixel(i, j, col);
-            }
-            else
-            {
-                sf::Uint8 val = static_cast<sf::Uint8>(cell.min());
-                sf::Color col(val, val, val);
-                img.setPixel(i, j, col);
-            }
-            i++;
-        }
-        j++;
-    }
-    return img;
+    return m_image;
 }
 
 template <typename T>
