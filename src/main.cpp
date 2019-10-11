@@ -1,3 +1,4 @@
+#include "img_handler.h"
 #include "pqueue.h"
 #include "svm_cell.h"
 #include "svm_img.h"
@@ -24,18 +25,14 @@ int main(int argc, char *argv[])
 
     SVMImage<U8> svm_img(im);
     std::cout << "SVM object created\n";
-    sf::Image img;
-    img = svm_img.asSFImage();
-    std::cout << " created sf::Image" << std::endl;
-    sf::Texture tex;
-    tex.loadFromImage(img);
-    sf::Sprite sprite;
-    sprite.setTexture(tex);
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     sf::RenderWindow window(sf::VideoMode(800, 600), "Tree of Shape", sf::Style::Default, settings);
+    ImgHandler<U8> handler(svm_img, window.getSize().x, window.getSize().y);
 
+    sf::Vector2i newPos, oldPos = sf::Mouse::getPosition(window);
+    bool mouseButtonDown = false;
     while (window.isOpen())
     {
 
@@ -55,11 +52,32 @@ int main(int argc, char *argv[])
                     break;
                 }
             }
+            if (event.type == sf::Event::Resized)
+            {
+                sf::View view(window.getView());
+                view.setSize(event.size.width, event.size.height);
+                window.setView(view);
+            }
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left)
+            {
+                mouseButtonDown = true;
+                oldPos = sf::Mouse::getPosition();
+            }
+            if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
+            {
+                mouseButtonDown = false;
+            }
+            if (mouseButtonDown)
+            {
+                newPos = sf::Mouse::getPosition();
+                sf::Vector2i deltaPos = newPos - oldPos;
+                oldPos = newPos;
+                handler.move({deltaPos.x, deltaPos.y});
+            }
         }
 
         window.clear();
-        window.draw(sprite);
-
+        handler.draw(window);
         window.display();
     }
 
