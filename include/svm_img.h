@@ -3,6 +3,7 @@
 
 #include "svm_cell.h"
 #include <Common/Image.h>
+#include <SFML/Graphics/Image.hpp>
 #include <vector>
 
 template <typename T>
@@ -12,6 +13,8 @@ public:
     SVMImage(const LibTIM::Image<T> &img);
 
     std::vector<SVMCell<T> &> &getByType(CellType type);
+    // read only public acces to image data
+    sf::Image asSFImage() const;
 
 private:
     // add 1 pixel at the border of value median(Image)

@@ -5,6 +5,10 @@
 template <typename T>
 SVMImage<T>::SVMImage(const LibTIM::Image<T> &img) : m_original(img)
 {
+    std::cout << "hello\n";
+    extend();
+    //interpolate();
+    std::cout << "ok\n";
 }
 
 template <typename T>
@@ -12,6 +16,7 @@ void SVMImage<T>::extend()
 {
     // compute meidan value of the image
     std::vector<T> vec(m_original.begin(), m_original.end());
+
     std::size_t size = vec.size();
     // we assume the image is not of size 0,0
     std::sort(vec.begin(), vec.end());
@@ -54,13 +59,14 @@ void SVMImage<T>::extend()
 template <typename T>
 void SVMImage<T>::interpolate()
 {
-    std::vector<std::vector<SVMCell<T>>> i_img;
 
     std::size_t n = m_image.size();
     std::size_t m = m_image.at(0).size();
 
     std::size_t nbCol = 2 * (n * 2 - 1) - 1;
     std::size_t nbLine = 2 * (m * 2 - 1) - 1;
+
+    std::vector<std::vector<SVMCell<T>>> i_img(nbLine, std::vector<SVMCell<T>>(nbCol));
 
     // fill old pixels
     for (unsigned int l = 0; l < nbLine; l += 4)
@@ -161,6 +167,37 @@ void SVMImage<T>::interpolate()
     }
 
     m_image = i_img;
+}
+
+template <typename T>
+sf::Image SVMImage<T>::asSFImage() const
+{
+    sf::Image img;
+    img.create(m_image.at(0).size(), m_image.size());
+    int j = 0;
+    std::cout << "size of image:" << m_image.at(0).size() << ", " << m_image.size() << std::endl;
+    for (auto row : m_image)
+    {
+        int i = 0;
+        for (SVMCell<T> cell : row)
+        {
+            if (cell.type() == CellType::Original || cell.type() == CellType::New)
+            {
+                sf::Uint8 val = static_cast<sf::Uint8>(cell.value());
+                sf::Color col(val, val, val);
+                img.setPixel(i, j, col);
+            }
+            else
+            {
+                sf::Uint8 val = static_cast<sf::Uint8>(cell.min());
+                sf::Color col(val, val, val);
+                img.setPixel(i, j, col);
+            }
+            i++;
+        }
+        j++;
+    }
+    return img;
 }
 
 template <typename T>
