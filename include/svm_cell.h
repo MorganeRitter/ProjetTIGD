@@ -3,15 +3,33 @@
 
 #include <cstddef> // for size_t
 
+// A SVMCell represent a Set Value Map Cell, which compose a Set Value Map
+// A SVMCell can be of four types:
 enum CellType
 {
-    Original,
-    New,
-    Inter2,
-    Inter4
+    Original, // a cell directly generated from the original 2D image, holding the value of the original pixel
+    New,      // a cell between two Original cell, holding the highest value of the Original cell in its neighbourhood
+    Inter2,   // a cell between an Original and a New cell (up/down or left/right), holding the value range from the lowest value of the surround cells to the highest value
+    Inter4    // a cell between an four Inter2 cells (up/down and left/right), holding the value range from the lowest value of the surround cells to the highest value
 };
 
-/* A SVMCell represent a Set Value Map Cell, which compose a Set Value Map*/
+//   __________ ___________ __________ ____________ __________
+//  | Original |  Inter2   |    New   |            |          |
+//  |     8    |  (8..24)  |   (12)   |  (24..24)  |    12    |
+//  |__________|___________|__________|____________|__________|
+//  |   Inter2 |  Inter4   |  Inter2  |            |          |
+//  |  (8..8)  |  {8..24}  | (12..24) |  {24..24}  | (12..24) |
+//  |__________|___________|__________|____________|__________|
+//  |    New   |   Inter2  |    New   |            |          |
+//  |    (8)   |  (8..24)  |   (24)   |  (24..24)  |   (24)   |
+//  |__________|___________|__________|____________|__________|
+//  |          |           |          |            |          |
+//  |  (0..8)  |  {8..24}  | (24..24) |  {24..24}  | (24..24) |
+//  |__________|___________|__________|____________|__________|
+//  |          |           |          |            |          |
+//  |     0    |  (8..24)  |   (24)   | (24..24)   |    24    |
+//  |__________|___________|__________|____________|__________|
+//
 template <typename T>
 class SVMCell
 {
@@ -44,7 +62,7 @@ public:
     inline SVMCell<T> *zpar() const;
 
 private:
-    // iage interpolation
+    // image interpolation
     CellType m_type;     // type of the cell, determine if m_value or m_in/m_max is used
     bool m_visited;      // if the cell as been visited
     std::size_t m_level; // memorization of the level where the queue handled the face

@@ -6,6 +6,7 @@
 #include <SFML/Graphics/Image.hpp>
 #include <vector>
 
+// A SVMImage represent a Set Value Map image and is composed of SVMCell.
 template <typename T>
 class SVMImage
 {
