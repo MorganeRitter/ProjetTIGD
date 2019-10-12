@@ -8,7 +8,7 @@ ImgHandler<T>::ImgHandler(SVMImage<T> &img, int width, int height) : m_svmImage(
     m_texture.loadFromImage(m_image);
     m_sprite.setTexture(m_texture);
     float s = width / m_sprite.getGlobalBounds().height;
-    m_sprite.setScale(s, s);
+    //m_sprite.setScale(s, s);
 }
 
 template <typename T>
