@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     // Image est une classe générique paramétrée par le type des points contenus dans l'image
     LibTIM::Image<unsigned char> im;
-    if (LibTIM::Image<U8>::load(argv[1], im))
+    if (LibTIM::Image<LibTIM::U8>::load(argv[1], im))
         std::cout << "Great, image is loaded\n";
     else
         return 1;
