@@ -1,35 +1,14 @@
 #include "img_handler.h"
 
 template <typename T>
-ImgHandler<T>::ImgHandler(SVMImage<T> &img, int width, int height) : m_svmImage(img), m_width(width), m_height(height)
+ImgHandler<T>::ImgHandler(SVMImage<T> &img, int width, int height) : m_svmImage(img)
 {
     m_image.create(m_svmImage.data().at(0).size(), m_svmImage.data().size());
     feed();
     m_texture.loadFromImage(m_image);
     m_sprite.setTexture(m_texture);
-    float s = m_height / m_sprite.getGlobalBounds().height;
+    float s = width / m_sprite.getGlobalBounds().height;
     m_sprite.setScale(s, s);
-}
-
-template <typename T>
-void ImgHandler<T>::zoom(float factor)
-{
-    // update sprite scale factor
-}
-
-template <typename T>
-void ImgHandler<T>::move(sf::Vector2f d)
-{
-    // update sprite position
-    m_sprite.move(d);
-}
-
-template <typename T>
-void ImgHandler<T>::pointer(sf::Vector2i p)
-{
-    // update pixel highlighting
-    m_texture.loadFromImage(m_image);
-    m_sprite.setTexture(m_texture);
 }
 
 template <typename T>

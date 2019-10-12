@@ -10,10 +10,6 @@ class ImgHandler
 public:
     ImgHandler(SVMImage<T> &img, int width, int height);
 
-    void zoom(float factor);
-    void move(sf::Vector2f d);
-    void pointer(sf::Vector2i p);
-
     void draw(sf::RenderWindow &window);
 
 private:
@@ -22,7 +18,6 @@ private:
     sf::Image m_image;
     sf::Texture m_texture;
     sf::Sprite m_sprite;
-    int m_height, m_width;
 };
 
 #endif
