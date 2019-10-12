@@ -29,10 +29,13 @@ int main(int argc, char *argv[])
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     sf::RenderWindow window(sf::VideoMode(800, 600), "Tree of Shape", sf::Style::Default, settings);
+    sf::View view(window.getView());
+
     ImgHandler<U8> handler(svm_img, window.getSize().x, window.getSize().y);
 
-    sf::Vector2i newPos, oldPos = sf::Mouse::getPosition(window);
+    sf::Vector2f newPos, oldPos;
     bool mouseButtonDown = false;
+
     while (window.isOpen())
     {
 
@@ -54,14 +57,13 @@ int main(int argc, char *argv[])
             }
             if (event.type == sf::Event::Resized)
             {
-                sf::View view(window.getView());
                 view.setSize(event.size.width, event.size.height);
                 window.setView(view);
             }
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left)
             {
                 mouseButtonDown = true;
-                oldPos = sf::Mouse::getPosition();
+                oldPos = window.mapPixelToCoords({event.mouseButton.x, event.mouseButton.y});
             }
             if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
             {
@@ -69,10 +71,20 @@ int main(int argc, char *argv[])
             }
             if (mouseButtonDown)
             {
-                newPos = sf::Mouse::getPosition();
-                sf::Vector2i deltaPos = newPos - oldPos;
-                oldPos = newPos;
-                handler.move({deltaPos.x, deltaPos.y});
+                newPos = window.mapPixelToCoords({event.mouseMove.x, event.mouseMove.y});
+                sf::Vector2f deltaPos = oldPos - newPos;
+                view.setCenter(view.getCenter() + deltaPos);
+                window.setView(view);
+                oldPos = window.mapPixelToCoords({event.mouseMove.x, event.mouseMove.y});
+            }
+            if (event.type == sf::Event::MouseWheelMoved)
+            {
+                float delta = event.mouseWheel.delta;
+                if (delta > 0)
+                    view.zoom(0.9f);
+                else
+                    view.zoom(1.1f);
+                window.setView(view);
             }
         }
 
