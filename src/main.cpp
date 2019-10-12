@@ -6,6 +6,10 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+void drawUI(sf::RenderWindow &window, const sf::View &view);
+
+sf::Font font;
+
 int main(int argc, char *argv[])
 {
     if (argc != 2)
@@ -81,6 +85,7 @@ int main(int argc, char *argv[])
                     mouseButtonDown = true;
                     // Retrieving the mouse position at the event time
                     oldPos = window.mapPixelToCoords({event.mouseButton.x, event.mouseButton.y});
+                    continue;
                 }
             }
             if (event.type == sf::Event::MouseButtonReleased)
@@ -117,9 +122,44 @@ int main(int argc, char *argv[])
         // Draw calls
         window.clear();
         handler.draw(window);
+        drawUI(window, view);
 
         window.display();
     }
 
     return 0;
+}
+
+void drawUI(sf::RenderWindow &window, const sf::View &view)
+{
+    static bool initialized = false;
+    if (!initialized)
+    {
+        font.loadFromFile("fonts/NotoMono-Regular.ttf");
+        initialized = true;
+    }
+    float scale = view.getSize().x / static_cast<float>(window.getSize().x);
+    std::cout << view.getSize().x << " " << view.getSize().y << " " << scale << std::endl;
+    sf::Vertex X[] = {
+        sf::Vertex(sf::Vector2f(-(view.getSize().x - view.getCenter().x), 0.f), sf::Color::Red),
+        sf::Vertex(sf::Vector2f((view.getSize().x + view.getCenter().x), 0.f), sf::Color::Red)};
+    sf::Vertex Y[] = {
+        sf::Vertex(sf::Vector2f(0.f, (view.getSize().y + view.getCenter().y)), sf::Color::Green),
+        sf::Vertex(sf::Vector2f(0.f, -(view.getSize().y - view.getCenter().y)), sf::Color::Green)};
+
+    /*int step = (scale + 50) / 100 * 100;
+    for (int i = 0; i < 10; i++)
+    {
+        sf::Text text;
+        text.setString(std::to_string(i * step));
+        text.setFont(font);
+        text.setCharacterSize(24);
+        text.setColor(sf::Color::White);
+        text.setScale({scale, scale});
+        text.setPosition({i * step, (-24 * scale) - scale * 2.0f});
+        window.draw(text);
+    }*/
+
+    window.draw(X, 2, sf::Lines);
+    window.draw(Y, 2, sf::Lines);
 }
