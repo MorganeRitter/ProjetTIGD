@@ -8,7 +8,7 @@ template <typename T>
 class ImgHandler
 {
 public:
-    ImgHandler(SVMImage<T> &img, int width, int height);
+    ImgHandler(SVMImage<T> &img);
 
     void draw(sf::RenderWindow &window);
 
