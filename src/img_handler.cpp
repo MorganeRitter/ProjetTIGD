@@ -1,14 +1,16 @@
 #include "img_handler.h"
 
 template <typename T>
-ImgHandler<T>::ImgHandler(SVMImage<T> &img, int width, int height) : m_svmImage(img)
+ImgHandler<T>::ImgHandler(SVMImage<T> &img) : m_svmImage(img)
 {
-    m_image.create(m_svmImage.data().at(0).size(), m_svmImage.data().size());
+    m_image.create(m_svmImage.width(), m_svmImage.height());
+    std::cout << "image allocated: (" << m_image.getSize().x << ", " << m_image.getSize().y << ")" << std::endl;
     feed();
+    std::cout << "image fed" << std::endl;
     m_texture.loadFromImage(m_image);
+    std::cout << "texture created" << std::endl;
     m_sprite.setTexture(m_texture);
-    float s = width / m_sprite.getGlobalBounds().height;
-    //m_sprite.setScale(s, s);
+    std::cout << "texture set" << std::endl;
 }
 
 template <typename T>
@@ -20,12 +22,11 @@ void ImgHandler<T>::draw(sf::RenderWindow &window)
 template <typename T>
 void ImgHandler<T>::feed()
 {
-    int j = 0;
-    for (auto row : m_svmImage.data())
+    for (int j = 0; j < m_svmImage.height(); j++) //y
     {
-        int i = 0;
-        for (SVMCell<T> cell : row)
+        for (int i = 0; i < m_svmImage.width(); i++) //x
         {
+            SVMCell<T> cell = m_svmImage.data().at(j * m_svmImage.width() + i);
             if (cell.type() == CellType::Original || cell.type() == CellType::New)
             {
                 sf::Uint8 val = static_cast<sf::Uint8>(cell.value());
@@ -38,9 +39,7 @@ void ImgHandler<T>::feed()
                 sf::Color col(val, val, val);
                 m_image.setPixel(i, j, col);
             }
-            i++;
         }
-        j++;
     }
 }
 
