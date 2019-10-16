@@ -12,6 +12,15 @@ sf::Font font;
 
 int main(int argc, char *argv[])
 {
+    std::cout
+        << "SVMCell<float>:" << sizeof(SVMCell<float>)
+        << " | std::size_t:" << sizeof(std::size_t)
+        << " | CellType:" << sizeof(CellType)
+        << " | int:" << sizeof(int)
+        << " | float:" << sizeof(float)
+        << " | bool:" << sizeof(bool)
+        << " | SVMCell*:" << sizeof(SVMCell<float> *)
+        << std::endl;
     if (argc != 2)
     {
         std::cout << "Usage: " << argv[0] << " <image.pgm> \n";
@@ -37,7 +46,8 @@ int main(int argc, char *argv[])
     sf::View view(window.getView());
 
     // Needed to render the SVMImage on the screen (as a texture on a sprite)
-    ImgHandler<LibTIM::U8> handler(svm_img, window.getSize().x, window.getSize().y);
+    std::cout << "e_img.size() = " << svm_img.height() * svm_img.width() << " | " << svm_img.data().size() << std::endl;
+    ImgHandler<LibTIM::U8> handler(svm_img);
 
     // Variables needed to compute mouse position changes (panning)
     sf::Vector2f newPos, oldPos;
