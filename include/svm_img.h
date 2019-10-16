@@ -15,7 +15,12 @@ public:
 
     std::vector<SVMCell<T> &> &getByType(CellType type);
     // read only public acces to image data
-    const std::vector<std::vector<SVMCell<T>>> &data() const;
+    const std::vector<SVMCell<T>> &data() const;
+
+    inline void width(int w);
+    inline void height(int h);
+    inline int width() const;
+    inline int height() const;
 
 private:
     // add 1 pixel at the border of value median(Image)
@@ -27,9 +32,13 @@ private:
     // getter for a pixel @ pos [i,j]
     SVMCell<T> &operator()(int i, int j);
 
-private:
+    SVMCell<T> &get(int i, int j);
     void constructSVMImage();
-    std::vector<std::vector<SVMCell<T>>> m_image; // as [x,y]
+
+private:
+    int m_height, m_width;
+
+    std::vector<SVMCell<T>> m_image;
     LibTIM::Image<T> m_original;
 };
 
