@@ -5,10 +5,10 @@
 template <typename T>
 SVMImage<T>::SVMImage(const LibTIM::Image<T> &img) : m_original(img)
 {
-    std::cout << "hello\n";
     extend();
-    //interpolate();
-    std::cout << "ok\n";
+    std::cout << "image extended" << std::endl;
+    interpolate();
+    std::cout << "image interpolated" << std::endl;
 }
 
 template <typename T>
@@ -63,11 +63,11 @@ void SVMImage<T>::interpolate()
     std::size_t n = m_image.size();
     std::size_t m = m_image.at(0).size();
 
-    std::size_t nbCol = 2 * (n * 2 - 1) - 1;
-    std::size_t nbLine = 2 * (m * 2 - 1) - 1;
-
+    std::size_t nbCol = 2 * (m * 2 - 1) - 1;
+    std::size_t nbLine = 2 * (n * 2 - 1) - 1;
+    std::cout << nbCol << " " << nbLine << std::endl;
     std::vector<std::vector<SVMCell<T>>> i_img(nbLine, std::vector<SVMCell<T>>(nbCol));
-
+    std::cout << "initialized" << std::endl;
     // fill old pixels
     for (unsigned int l = 0; l < nbLine; l += 4)
     {
@@ -80,6 +80,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l).at(c) = cell;
         }
     }
+    std::cout << "old pixels" << std::endl;
 
     // fill new pixels : lines
     for (unsigned int l = 0; l < nbLine; l += 4)
@@ -93,6 +94,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l).at(c) = cell;
         }
     }
+    std::cout << "New pixels" << std::endl;
 
     // Pas de out of range, on s'arrête à nbLine-2 puisqu'on fait c+=4 et qu'on commence à 2
 
@@ -108,6 +110,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l).at(c) = cell;
         }
     }
+    std::cout << "New pixels" << std::endl;
 
     // fill the remaining values
     // ordre de parcours arbitraire
@@ -124,6 +127,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l).at(c) = cell;
         }
     }
+    std::cout << "New pixels" << std::endl;
 
     // fill the interpixels
 
@@ -138,6 +142,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l).at(c) = cell;
         }
     }
+    std::cout << "inter2 pixels" << std::endl;
 
     for (unsigned int c = 0; c < nbCol; c += 2)
     {
@@ -150,6 +155,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l).at(c) = cell;
         }
     }
+    std::cout << "inter2 pixels" << std::endl;
 
     // parcours arbitraire
     for (unsigned int l = 1; l < nbLine; l += 2)
@@ -165,6 +171,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l).at(c) = cell;
         }
     }
+    std::cout << "inter4 pixels" << std::endl;
 
     m_image = i_img;
 }
