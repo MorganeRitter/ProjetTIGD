@@ -139,7 +139,7 @@ void drawUI(sf::RenderWindow &window, const sf::View &view)
         initialized = true;
     }
     float scale = view.getSize().x / static_cast<float>(window.getSize().x);
-    std::cout << view.getSize().x << " " << view.getSize().y << " " << scale << std::endl;
+    //std::cout << view.getSize().x << " " << view.getSize().y << " " << scale << std::endl;
     sf::Vertex X[] = {
         sf::Vertex(sf::Vector2f(-(view.getSize().x - view.getCenter().x), 0.f), sf::Color::Red),
         sf::Vertex(sf::Vector2f((view.getSize().x + view.getCenter().x), 0.f), sf::Color::Red)};

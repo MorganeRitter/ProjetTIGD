@@ -34,7 +34,7 @@ void ImgHandler<T>::feed()
             }
             else
             {
-                sf::Uint8 val = static_cast<sf::Uint8>(cell.min());
+                sf::Uint8 val = static_cast<sf::Uint8>((cell.min() + cell.max()) / static_cast<T>(2));
                 sf::Color col(val, val, val);
                 m_image.setPixel(i, j, col);
             }
