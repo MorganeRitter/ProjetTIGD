@@ -141,7 +141,9 @@ void SVMImage<T>::interpolate()
     {
         for (unsigned int c = 1; c < nbCol; c += 2)
         {
-            SVMCell<T> cell(CellType::Inter2, std::max(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
+            SVMCell<T> cell(CellType::Inter2,
+              std::min(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()),
+              std::max(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
@@ -154,7 +156,9 @@ void SVMImage<T>::interpolate()
     {
         for (unsigned int l = 1; l < nbLine; l += 2)
         {
-            SVMCell<T> cell(CellType::Inter2, std::max(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()));
+            SVMCell<T> cell(CellType::Inter2,
+              std::min(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()),
+              std::max(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()));
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
@@ -168,9 +172,11 @@ void SVMImage<T>::interpolate()
     {
         for (unsigned int c = 1; c < nbCol; c += 2)
         {
-            T m = std::max(std::max(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()),
+            T ma = std::max(std::max(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()),
                            std::max(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
-            SVMCell<T> cell(CellType::Inter4, m);
+            T mi = std::min(std::min(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()),
+                          std::min(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
+            SVMCell<T> cell(CellType::Inter4, mi, ma);
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
