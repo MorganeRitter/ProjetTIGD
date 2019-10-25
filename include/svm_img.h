@@ -22,15 +22,15 @@ public:
     inline int width() const;
     inline int height() const;
 
+    // getter for a pixel @ pos [i,j]
+    SVMCell<T> &operator()(int i, int j);
+
 private:
     // add 1 pixel at the border of value median(Image)
     void extend();
 
     // interpolate the image
     void interpolate();
-
-    // getter for a pixel @ pos [i,j]
-    SVMCell<T> &operator()(int i, int j);
 
     SVMCell<T> &get(int i, int j);
     void constructSVMImage();
