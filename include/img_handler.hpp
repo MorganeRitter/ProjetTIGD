@@ -42,12 +42,3 @@ void ImgHandler<T>::feed()
         }
     }
 }
-
-template class ImgHandler<int>;
-template class ImgHandler<unsigned int>;
-template class ImgHandler<char>;
-template class ImgHandler<unsigned char>;
-template class ImgHandler<long>;
-template class ImgHandler<unsigned long>;
-template class ImgHandler<float>;
-template class ImgHandler<double>;

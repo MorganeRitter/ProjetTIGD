@@ -70,12 +70,3 @@ template <typename T>
 inline SVMCell<T> *SVMCell<T>::parent() const { return m_parent; }
 template <typename T>
 inline SVMCell<T> *SVMCell<T>::zpar() const { return m_zpar; }
-
-template class SVMCell<int>;
-template class SVMCell<unsigned int>;
-template class SVMCell<char>;
-template class SVMCell<unsigned char>;
-template class SVMCell<long>;
-template class SVMCell<unsigned long>;
-template class SVMCell<float>;
-template class SVMCell<double>;

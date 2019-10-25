@@ -20,4 +20,6 @@ private:
     sf::Sprite m_sprite;
 };
 
+#include "img_handler.hpp"
+
 #endif

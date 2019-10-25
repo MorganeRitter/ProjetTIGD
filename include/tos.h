@@ -21,13 +21,6 @@ private:
     SVMImage<T> &m_image;
 };
 
-template class TOS<int>;
-template class TOS<unsigned int>;
-template class TOS<char>;
-template class TOS<unsigned char>;
-template class TOS<long>;
-template class TOS<unsigned long>;
-template class TOS<float>;
-template class TOS<double>;
+#include "tos.hpp"
 
 #endif // TOS_H

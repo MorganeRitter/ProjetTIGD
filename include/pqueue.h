@@ -19,7 +19,7 @@ public:
 
     // push <cell> in queue, with level <level> used to find definitive level
     void priority_push(SVMCell<T> *cell, std::size_t level);
-    // pop the next cell to handle, with level <level> used to find the next one to read 
+    // pop the next cell to handle, with level <level> used to find the next one to read
     SVMCell<T> *priority_pop(std::size_t level);
 
     // get the number of queues up to the last non-empty queue
@@ -56,5 +56,7 @@ private:
 
     std::vector<std::deque<SVMCell<T> *>> m_pqueue;
 };
+
+#include "pqueue.hpp"
 
 #endif

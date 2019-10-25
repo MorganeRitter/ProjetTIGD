@@ -42,4 +42,6 @@ private:
     LibTIM::Image<T> m_original;
 };
 
+#include "svm_img.hpp"
+
 #endif

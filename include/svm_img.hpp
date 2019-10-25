@@ -142,8 +142,8 @@ void SVMImage<T>::interpolate()
         for (unsigned int c = 1; c < nbCol; c += 2)
         {
             SVMCell<T> cell(CellType::Inter2,
-              std::min(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()),
-              std::max(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
+                            std::min(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()),
+                            std::max(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
@@ -157,8 +157,8 @@ void SVMImage<T>::interpolate()
         for (unsigned int l = 1; l < nbLine; l += 2)
         {
             SVMCell<T> cell(CellType::Inter2,
-              std::min(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()),
-              std::max(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()));
+                            std::min(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()),
+                            std::max(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()));
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
@@ -173,9 +173,9 @@ void SVMImage<T>::interpolate()
         for (unsigned int c = 1; c < nbCol; c += 2)
         {
             T ma = std::max(std::max(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()),
-                           std::max(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
+                            std::max(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
             T mi = std::min(std::min(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()),
-                          std::min(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
+                            std::min(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
             SVMCell<T> cell(CellType::Inter4, mi, ma);
             cell.posX(l);
             cell.posY(c);
@@ -216,12 +216,3 @@ template <typename T>
 int SVMImage<T>::width() const { return m_width; }
 template <typename T>
 int SVMImage<T>::height() const { return m_height; }
-
-template class SVMImage<int>;
-template class SVMImage<unsigned int>;
-template class SVMImage<char>;
-template class SVMImage<unsigned char>;
-template class SVMImage<long>;
-template class SVMImage<unsigned long>;
-template class SVMImage<float>;
-template class SVMImage<double>;

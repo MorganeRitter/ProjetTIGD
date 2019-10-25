@@ -85,4 +85,6 @@ private:
     };
 };
 
+#include "svm_cell.hpp"
+
 #endif // SVM_CELL_H

@@ -38,24 +38,33 @@ SVMCell<T> *PQueue<T>::pop(std::size_t level)
 }
 
 template <typename T>
-void PQueue<T>::priority_push(SVMCell<T> *cell, std::size_t level) {
+void PQueue<T>::priority_push(SVMCell<T> *cell, std::size_t level)
+{
     std::size_t lower;
     std::size_t upper;
     std::size_t levelToPush;
 
-    if(cell->type() == CellType::Inter2 || cell->type() == CellType::Inter4) {
+    if (cell->type() == CellType::Inter2 || cell->type() == CellType::Inter4)
+    {
         lower = static_cast<std::size_t>(cell->min());
         upper = static_cast<std::size_t>(cell->max());
-    } else {
+    }
+    else
+    {
         lower = static_cast<std::size_t>(cell->value());
         upper = static_cast<std::size_t>(cell->value());
     }
 
-    if(lower > level) {
+    if (lower > level)
+    {
         levelToPush = lower;
-    } else if (upper < level) {
+    }
+    else if (upper < level)
+    {
         levelToPush = upper;
-    } else {
+    }
+    else
+    {
         levelToPush = level;
     }
 
@@ -63,9 +72,11 @@ void PQueue<T>::priority_push(SVMCell<T> *cell, std::size_t level) {
 }
 
 template <typename T>
-SVMCell<T> *PQueue<T>::priority_pop(std::size_t level) {
+SVMCell<T> *PQueue<T>::priority_pop(std::size_t level)
+{
     std::size_t currentLevel = level;
-    while(m_pqueue[currentLevel].size() == 0) {
+    while (m_pqueue[currentLevel].size() == 0)
+    {
         currentLevel = (currentLevel + 1) % m_pqueue.size();
     }
     return (pop(currentLevel));
@@ -115,12 +126,3 @@ void PQueue<T>::clean()
         i--;
     }
 }
-
-template class PQueue<int>;
-template class PQueue<unsigned int>;
-template class PQueue<char>;
-template class PQueue<unsigned char>;
-template class PQueue<long>;
-template class PQueue<unsigned long>;
-template class PQueue<float>;
-template class PQueue<double>;
