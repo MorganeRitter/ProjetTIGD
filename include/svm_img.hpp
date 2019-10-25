@@ -9,7 +9,7 @@ SVMImage<T>::SVMImage(const LibTIM::Image<T> &img) : m_original(img)
     m_height = img.getSizeY();
     extend();
     std::cout << "image extended" << std::endl;
-    interpolate();
+    //interpolate();
     std::cout << "image interpolated" << std::endl;
 }
 
@@ -19,7 +19,7 @@ void SVMImage<T>::extend()
     // compute meidan value of the image
     std::vector<T> vec(m_original.begin(), m_original.end());
 
-    std::size_t size = vec.size();
+    std::size_t size = vec.size()-1;
     // we assume the image is not of size 0,0
     std::sort(vec.begin(), vec.end());
     T median;
@@ -46,13 +46,16 @@ void SVMImage<T>::extend()
             {
                 SVMCell<T> cell(CellType::Original, median);
                 e_img.push_back(cell);
+                std::cout << static_cast<unsigned int>(median) << " ";
             }
             else
             {
                 SVMCell<T> cell(CellType::Original, m_original(i - 1, j - 1));
                 e_img.push_back(cell);
+                std::cout << static_cast<unsigned int>(cell.value()) << " ";
             }
         }
+        std::cout << std::endl;
     }
     std::cout << "e_img.size() = " << e_img.size() << std::endl;
     m_image = e_img;
@@ -197,22 +200,22 @@ const std::vector<SVMCell<T>> &SVMImage<T>::data() const
 }
 
 template <typename T>
-SVMCell<T> *SVMImage<T>::operator()(int i, int j)
+SVMCell<T> *SVMImage<T>::operator()(std::size_t i, std::size_t j)
 {
-    return &(m_image.at(m_height * i + j));
+    return &(m_image.at(m_width * i + j));
 }
 
 template <typename T>
 SVMCell<T> &SVMImage<T>::get(int i, int j)
 {
-    return m_image.at(m_height * i + j);
+    return m_image.at(m_width * i + j);
 }
 
 template <typename T>
-inline void SVMImage<T>::width(int w) { m_width = w; }
+inline void SVMImage<T>::width(std::size_t w) { m_width = w; }
 template <typename T>
-void SVMImage<T>::height(int h) { m_height = h; }
+void SVMImage<T>::height(std::size_t h) { m_height = h; }
 template <typename T>
-int SVMImage<T>::width() const { return m_width; }
+std::size_t SVMImage<T>::width() const { return m_width; }
 template <typename T>
-int SVMImage<T>::height() const { return m_height; }
+std::size_t SVMImage<T>::height() const { return m_height; }
