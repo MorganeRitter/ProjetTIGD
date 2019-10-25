@@ -11,6 +11,9 @@ void drawUI(sf::RenderWindow &window, const sf::View &view);
 
 sf::Font font;
 
+template <typename T>
+void displaySVMImage(SVMImage<T> &img);
+
 int main(int argc, char *argv[])
 {
     std::cout
@@ -38,7 +41,9 @@ int main(int argc, char *argv[])
     SVMImage<LibTIM::U8> svm_img(im);
     std::cout << "SVM object created\n";
 
-    TOS<LibTIM::U8> tree(svm_img);
+    displaySVMImage(svm_img);
+
+    //TOS<LibTIM::U8> tree(svm_img);
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -175,4 +180,21 @@ void drawUI(sf::RenderWindow &window, const sf::View &view)
 
     window.draw(X, 2, sf::Lines);
     window.draw(Y, 2, sf::Lines);
+}
+
+
+template <typename T>
+void displaySVMImage(SVMImage<T> &img)
+{
+    for(std::size_t i = 0; i < img.height() ; i++)
+    {
+        for(std::size_t j = 0; j < img.width() ; j++)
+        {
+            if(img(i,j)->type() == CellType::Original || img(i,j)->type() == CellType::New)
+                std::cout << static_cast<unsigned int>(img(i,j)->value()) << " ";
+            //if(img(i,j)->type() == CellType::Inter2 || img(i,j)->type() == CellType::Inter4)
+            //    std::cout << static_cast<unsigned int>(img(i,j)->min()) << " ";
+        }
+        std::cout << std::endl;
+    }
 }
