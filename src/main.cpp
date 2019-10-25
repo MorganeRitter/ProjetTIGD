@@ -6,6 +6,7 @@
 #include <Common/Image.h>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <chrono>
 
 void drawUI(sf::RenderWindow &window, const sf::View &view);
 
@@ -16,6 +17,7 @@ void displaySVMImage(SVMImage<T> &img);
 
 int main(int argc, char *argv[])
 {
+    auto start = std::chrono::high_resolution_clock::now();
     std::cout
         << "SVMCell<float>:" << sizeof(SVMCell<float>)
         << " | std::size_t:" << sizeof(std::size_t)
@@ -41,9 +43,11 @@ int main(int argc, char *argv[])
     SVMImage<LibTIM::U8> svm_img(im);
     std::cout << "SVM object created\n";
 
-    displaySVMImage(svm_img);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>( stop - start ).count();
+    std::cout << "Executed in " << duration << "seconds" << std::endl;
 
-    //TOS<LibTIM::U8> tree(svm_img);
+    TOS<LibTIM::U8> tree(svm_img);
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -192,8 +196,8 @@ void displaySVMImage(SVMImage<T> &img)
         {
             if(img(i,j)->type() == CellType::Original || img(i,j)->type() == CellType::New)
                 std::cout << static_cast<unsigned int>(img(i,j)->value()) << " ";
-            //if(img(i,j)->type() == CellType::Inter2 || img(i,j)->type() == CellType::Inter4)
-            //    std::cout << static_cast<unsigned int>(img(i,j)->min()) << " ";
+            if(img(i,j)->type() == CellType::Inter2 || img(i,j)->type() == CellType::Inter4)
+                std::cout << static_cast<unsigned int>(img(i,j)->min()) << " ";
         }
         std::cout << std::endl;
     }

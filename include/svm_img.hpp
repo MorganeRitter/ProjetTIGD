@@ -1,7 +1,8 @@
 #include "svm_img.h"
+#include "utils.h"
 #include <algorithm>
 #include <vector>
-
+#include <omp.h>
 template <typename T>
 SVMImage<T>::SVMImage(const LibTIM::Image<T> &img) : m_original(img)
 {
@@ -9,7 +10,7 @@ SVMImage<T>::SVMImage(const LibTIM::Image<T> &img) : m_original(img)
     m_height = img.getSizeY();
     extend();
     std::cout << "image extended" << std::endl;
-    //interpolate();
+    interpolate();
     std::cout << "image interpolated" << std::endl;
 }
 
@@ -46,16 +47,13 @@ void SVMImage<T>::extend()
             {
                 SVMCell<T> cell(CellType::Original, median);
                 e_img.push_back(cell);
-                std::cout << static_cast<unsigned int>(median) << " ";
             }
             else
             {
                 SVMCell<T> cell(CellType::Original, m_original(i - 1, j - 1));
                 e_img.push_back(cell);
-                std::cout << static_cast<unsigned int>(cell.value()) << " ";
             }
         }
-        std::cout << std::endl;
     }
     std::cout << "e_img.size() = " << e_img.size() << std::endl;
     m_image = e_img;
@@ -73,8 +71,9 @@ void SVMImage<T>::interpolate()
 
     std::size_t nbCol = 2 * (n * 2 - 1) - 1;
     std::size_t nbLine = 2 * (m * 2 - 1) - 1;
+    std::size_t size = nbCol*nbLine;
     std::cout << nbCol << " " << nbLine << std::endl;
-    std::vector<SVMCell<T>> i_img(nbLine * nbCol);
+    std::vector<SVMCell<T>> i_img(size);
 
     std::cout << "initialized" << std::endl;
     // fill old pixels
@@ -91,35 +90,37 @@ void SVMImage<T>::interpolate()
     }
     std::cout << "old pixels" << std::endl;
 
-    // fill new pixels : lines
-    for (unsigned int l = 0; l < nbLine; l += 4)
+    // fill in new pixels
+#pragma omp parallel for
+    for(std::size_t l = 0 ; l < nbLine ; l += 2)
     {
-        for (unsigned int c = 2; c < nbCol; c += 4)
+        //std::cout << omp_get_num_threads() << std::endl;
+
+        for(std::size_t c = (l+2) % 4 ; c < nbCol; c += 4)
         {
-            SVMCell<T> cell(CellType::New, std::max(i_img.at(l * nbCol + c - 2).value(), i_img.at(l * nbCol + c + 2).value()));
-            cell.posX(l);
-            cell.posY(c);
-            cell.visited(false);
-            i_img.at(l * nbCol + c) = cell;
+            if(l % 4 == 2)
+            {
+                // max of both neighboor original pixels on the same column
+                SVMCell<T> cell(CellType::New, std::max(i_img.at(clamp((l - 2) * nbCol + c,0ul,size-1)).value(),
+                                                        i_img.at(clamp((l + 2) * nbCol + c,0ul,size-1)).value()));
+                cell.posX(l);
+                cell.posY(c);
+                cell.visited(false);
+                i_img.at(l * nbCol + c) = cell;
+
+            }
+            else if(l % 4 == 0)
+            {
+                // max of neighboor original pixel on the same line
+                SVMCell<T> cell(CellType::New, std::max(i_img.at(clamp(l * nbCol + c - 2,0ul,size-1)).value(),
+                                                        i_img.at(clamp(l * nbCol + c + 2,0ul,size-1)).value()));
+                cell.posX(l);
+                cell.posY(c);
+                cell.visited(false);
+                i_img.at(l * nbCol + c) = cell;
+            }
         }
     }
-    std::cout << "New pixels" << std::endl;
-
-    // Pas de out of range, on s'arrête à nbLine-2 puisqu'on fait c+=4 et qu'on commence à 2
-
-    // fill new pixels : columns
-    for (unsigned int c = 0; c < nbCol; c += 4)
-    {
-        for (unsigned int l = 2; l < nbLine; l += 4)
-        {
-            SVMCell<T> cell(CellType::New, std::max(i_img.at((l - 2) * nbCol + c).value(), i_img.at((l + 2) * nbCol + c).value()));
-            cell.posX(l);
-            cell.posY(c);
-            cell.visited(false);
-            i_img.at(l * nbCol + c) = cell;
-        }
-    }
-    std::cout << "New pixels" << std::endl;
 
     // fill the remaining values
     // ordre de parcours arbitraire

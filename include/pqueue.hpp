@@ -96,9 +96,9 @@ bool PQueue<T>::empty() const
     }
     std::size_t i = m_pqueue.size() - 1;
 
-    while (i >= 0)
+    while (i > 0)
     {
-        if (!m_pqueue.at(i).empty())
+        if (!m_pqueue.at(i--).empty())
         {
             return false;
         }
