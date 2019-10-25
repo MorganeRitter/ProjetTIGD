@@ -4,6 +4,13 @@ template <typename T>
 TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 {
 	std::vector<SVMCell<T> *> sortedPixels = sort();
+
+	// std::cout << "résultat du tri" << std::endl;
+	// for(unsigned int i = 0; i<sortedPixels.size(); i++) {
+	// 	std::cout << static_cast<unsigned int>(sortedPixels.at(i)->value()) << "("
+	// 		<< static_cast<unsigned int>(sortedPixels.at(i)->posX()) << "," << static_cast<unsigned int>(sortedPixels.at(i)->posY()) << ")" << " " ;
+	// }
+	// std::cout << std::endl;
 }
 
 template <typename T>
@@ -82,28 +89,39 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 	while (!q.empty())
 	{
 		SVMCell<T> *currentFace = q.priority_pop(l); // h
+		currentFace->visited(true);
 		currentFace->level(l);
 		order.push_back(currentFace);
 
 		// get neighbourhood
-		for (unsigned int j = currentFace->posY() - 1; j < currentFace->posY() + 1; j++)
+		for (int j = currentFace->posY() - 1; j <= currentFace->posY() + 1; j++)
 		{
-			for (unsigned int k = currentFace->posX() - 1; k < currentFace->posX() + 1; k++)
+			if(j < 0 || j > m_image.height()) {
+				continue;
+			}
+
+			for (int k = currentFace->posX() - 1; k <= currentFace->posX() + 1; k++)
 			{
+				if((j == currentFace->posY() && k == currentFace->posX()) ||  k < 0 || j > m_image.width()) {
+					continue;
+				}
 
 				n = m_image(j, k);
+
 				if (!n->visited())
 				{
 					neighbours.push_back(n);
 				}
 			}
 		}
+
 		// add neighbourhood to queue
 		for (unsigned int j = 0; j < neighbours.size(); j++)
 		{
 			q.priority_push(neighbours[j], l);
 			neighbours[j]->visited(true);
 		}
+		neighbours.clear();
 		i++;
 	}
 

@@ -91,7 +91,11 @@ std::size_t PQueue<T>::size() const
 template <typename T>
 bool PQueue<T>::empty() const
 {
+    if(m_pqueue.size() < 1) {
+        return true;
+    }
     std::size_t i = m_pqueue.size() - 1;
+
     while (i >= 0)
     {
         if (!m_pqueue.at(i).empty())
