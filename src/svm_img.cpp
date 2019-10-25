@@ -197,9 +197,9 @@ const std::vector<SVMCell<T>> &SVMImage<T>::data() const
 }
 
 template <typename T>
-SVMCell<T> &SVMImage<T>::operator()(int i, int j)
+SVMCell<T> *SVMImage<T>::operator()(int i, int j)
 {
-    return m_image.at(m_height * i + j);
+    return &(m_image.at(m_height * i + j));
 }
 
 template <typename T>

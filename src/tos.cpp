@@ -1,8 +1,9 @@
 #include "tos.h"
 
 template <typename T>
-TOS<T>::TOS(const SVMImage<T> &img) : m_image(img)
+TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 {
+	std::vector<SVMCell<T> *> sortedPixels = sort();
 }
 
 template <typename T>
@@ -15,23 +16,23 @@ SVMCell<T> *TOS<T>::unionFind(std::vector<SVMCell<T> *> R)
 		currentP->zpar(currentP);
 
 		std::vector<SVMCell<T> *> neighbours = {
-			m_image(currentP->x() - 1, currentP->y() - 1),
-			m_image(currentP->x(), currentP->y() - 1),
-			m_image(currentP->x() + 1, currentP->y() - 1),
+			m_image(currentP->posX() - 1, currentP->posY() - 1),
+			m_image(currentP->posX(), currentP->posY() - 1),
+			m_image(currentP->posX() + 1, currentP->posY() - 1),
 
-			m_image(currentP->x() - 1, currentP->y()),
-			m_image(currentP->x() + 1, currentP->y()),
+			m_image(currentP->posX() - 1, currentP->posY()),
+			m_image(currentP->posX() + 1, currentP->posY()),
 
-			m_image(currentP->x() - 1, currentP->y() + 1),
-			m_image(currentP->x(), currentP->y() + 1),
-			m_image(currentP->x() + 1, currentP->y() + 1),
+			m_image(currentP->posX() - 1, currentP->posY() + 1),
+			m_image(currentP->posX(), currentP->posY() + 1),
+			m_image(currentP->posX() + 1, currentP->posY() + 1),
 		};
 
 		for (auto neighbour : neighbours)
 		{
 			if (neighbour->zpar() != nullptr)
 			{
-				SVMCell<T> root = findRoot(neighbour);
+				SVMCell<T>* root = findRoot(neighbour);
 				if (root == currentP)
 				{
 					root->parent(currentP);
@@ -70,7 +71,7 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 
 	// get first level
 	SVMCell<T> *borderFace = m_image(0, 0); // p_infinite
-	T borderValue = borderFace.value();		// l_infinite
+	T borderValue = borderFace->value();		// l_infinite
 	std::size_t initialLevel = static_cast<std::size_t>(borderValue);
 
 	unsigned int i = 0;
@@ -80,18 +81,18 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 
 	while (!q.empty())
 	{
-		SVMCell<T *> currentFace = q.priority_pop(l); // h
-		currentFace.level(l);
+		SVMCell<T> *currentFace = q.priority_pop(l); // h
+		currentFace->level(l);
 		order.push_back(currentFace);
 
 		// get neighbourhood
-		for (unsigned int j = currentFace.y() - 1; j < currentFace.y() + 1; j++)
+		for (unsigned int j = currentFace->posY() - 1; j < currentFace->posY() + 1; j++)
 		{
-			for (unsigned int k = currentFace.x() - 1; k < currentFace.x() + 1; k++)
+			for (unsigned int k = currentFace->posX() - 1; k < currentFace->posX() + 1; k++)
 			{
 
 				n = m_image(j, k);
-				if (!n.visited())
+				if (!n->visited())
 				{
 					neighbours.push_back(n);
 				}
@@ -101,7 +102,7 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 		for (unsigned int j = 0; j < neighbours.size(); j++)
 		{
 			q.priority_push(neighbours[j], l);
-			neighbours[j].visited(true);
+			neighbours[j]->visited(true);
 		}
 		i++;
 	}

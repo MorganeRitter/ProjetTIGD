@@ -9,7 +9,7 @@ template <typename T>
 class TOS
 {
 public:
-    TOS(const SVMImage<T> &img);
+    TOS(SVMImage<T> &img);
 
     // R comes from sort
     SVMCell<T> *unionFind(std::vector<SVMCell<T> *> R);
@@ -20,5 +20,14 @@ public:
 private:
     SVMImage<T> &m_image;
 };
+
+template class TOS<int>;
+template class TOS<unsigned int>;
+template class TOS<char>;
+template class TOS<unsigned char>;
+template class TOS<long>;
+template class TOS<unsigned long>;
+template class TOS<float>;
+template class TOS<double>;
 
 #endif // TOS_H

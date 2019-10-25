@@ -2,6 +2,7 @@
 #include "pqueue.h"
 #include "svm_cell.h"
 #include "svm_img.h"
+#include "tos.h"
 #include <Common/Image.h>
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -36,6 +37,8 @@ int main(int argc, char *argv[])
 
     SVMImage<LibTIM::U8> svm_img(im);
     std::cout << "SVM object created\n";
+
+    TOS<LibTIM::U8> tree(svm_img);
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;

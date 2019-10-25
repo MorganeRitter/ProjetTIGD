@@ -23,7 +23,7 @@ public:
     inline int height() const;
 
     // getter for a pixel @ pos [i,j]
-    SVMCell<T> &operator()(int i, int j);
+    SVMCell<T> *operator()(int i, int j);
 
 private:
     // add 1 pixel at the border of value median(Image)
