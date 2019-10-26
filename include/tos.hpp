@@ -5,7 +5,7 @@ TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 {
 	std::vector<SVMCell<T> *> sortedPixels = sort();
 
-    std::cout << "résultat du tri" << std::endl;
+    std::cout << "résultat du tri " << std::endl;
     for(unsigned int i = 0; i<sortedPixels.size(); i++) {
         std::cout
         << static_cast<unsigned int>(sortedPixels.at(i)->value()) << "("
@@ -13,29 +13,108 @@ TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
         << static_cast<unsigned int>(sortedPixels.at(i)->posY()) << ")" << " " ;
     }
     std::cout << std::endl;
+	SVMCell<T>* u = unionFind(sortedPixels);
 }
 
 template <typename T>
 SVMCell<T> *TOS<T>::unionFind(std::vector<SVMCell<T> *> R)
 {
+	//std::cout << "Taille" << m_image.width() << " " << m_image.height() << '\n';
 	for (int i = R.size() - 1; i >= 0; i--)
 	{
 		SVMCell<T> *currentP = R[i];
 		currentP->parent(currentP);
 		currentP->zpar(currentP);
 
-		std::vector<SVMCell<T> *> neighbours = {
-			m_image(currentP->posX() - 1, currentP->posY() - 1),
-			m_image(currentP->posX(), currentP->posY() - 1),
-			m_image(currentP->posX() + 1, currentP->posY() - 1),
+		std::vector<SVMCell<T> *> neighbours;
 
-			m_image(currentP->posX() - 1, currentP->posY()),
-			m_image(currentP->posX() + 1, currentP->posY()),
+		if(	currentP->posX() != 0
+			&& currentP->posY() != 0
+			&& currentP->posX() != m_image.width()-1
+			&& currentP->posY() != m_image.height()-1)
+		{
+			//std::cout << currentP->posX() << " " << currentP->posY() << '\n';
+			neighbours = {
+				m_image(currentP->posX() - 1, currentP->posY() - 1),
+				m_image(currentP->posX(), currentP->posY() - 1),
+				m_image(currentP->posX() + 1, currentP->posY() - 1),
 
-			m_image(currentP->posX() - 1, currentP->posY() + 1),
-			m_image(currentP->posX(), currentP->posY() + 1),
-			m_image(currentP->posX() + 1, currentP->posY() + 1),
-		};
+				m_image(currentP->posX() - 1, currentP->posY()),
+				m_image(currentP->posX() + 1, currentP->posY()),
+
+				m_image(currentP->posX() - 1, currentP->posY() + 1),
+				m_image(currentP->posX(), currentP->posY() + 1),
+				m_image(currentP->posX() + 1, currentP->posY() + 1),
+			};
+		}
+		else if(currentP->posX() == 0 && currentP->posY() == 0) {
+			//std::cout << "First line+col" << currentP->posX() << " " << currentP->posY() << '\n';
+			neighbours = {
+				m_image(currentP->posX() + 1, currentP->posY()),
+				m_image(currentP->posX(), currentP->posY() + 1),
+				m_image(currentP->posX() + 1, currentP->posY() + 1),
+			};
+		}
+		else if(currentP->posX() == m_image.width()-1
+				&& currentP->posY() == m_image.height()-1)
+		{
+			//std::cout << "Last line+col" << currentP->posX() << " " << currentP->posY() << '\n';
+			neighbours = {
+				m_image(currentP->posX() - 1, currentP->posY() - 1),
+				m_image(currentP->posX(), currentP->posY() - 1),
+				m_image(currentP->posX() - 1, currentP->posY()),
+			};
+		}
+		else if(currentP->posX() == 0)
+		{
+			//std::cout <<"First col" << currentP->posX() << " " << currentP->posY() << '\n';
+			neighbours = {
+				m_image(currentP->posX(), currentP->posY() - 1),
+				m_image(currentP->posX() + 1, currentP->posY() - 1),
+
+				m_image(currentP->posX() + 1, currentP->posY()),
+
+				m_image(currentP->posX(), currentP->posY() + 1),
+				m_image(currentP->posX() + 1, currentP->posY() + 1),
+			};
+		}
+		else if(currentP->posY() == 0)
+		{
+			//std::cout << "First line" << currentP->posX() << " " << currentP->posY() << '\n';
+			neighbours = {
+				m_image(currentP->posX() - 1, currentP->posY()),
+				m_image(currentP->posX() + 1, currentP->posY()),
+
+				m_image(currentP->posX() - 1, currentP->posY() + 1),
+				m_image(currentP->posX(), currentP->posY() + 1),
+				m_image(currentP->posX() + 1, currentP->posY() + 1),
+			};
+		}
+		else if(currentP->posX() == m_image.width()-1)
+		{
+			//std::cout << "Last col" << currentP->posX() << " " << currentP->posY() << '\n';
+			neighbours = {
+				m_image(currentP->posX() - 1, currentP->posY() - 1),
+				m_image(currentP->posX(), currentP->posY() - 1),
+
+				m_image(currentP->posX() - 1, currentP->posY()),
+
+				m_image(currentP->posX() - 1, currentP->posY() + 1),
+				m_image(currentP->posX(), currentP->posY() + 1),
+			};
+		}
+		else if(currentP->posY() == m_image.height()-1)
+		{
+			//std::cout << "Last line " << currentP->posX() << " " << currentP->posY() << '\n';
+			neighbours = {
+				m_image(currentP->posX() - 1, currentP->posY() - 1),
+				m_image(currentP->posX(), currentP->posY() - 1),
+				m_image(currentP->posX() + 1, currentP->posY() - 1),
+
+				m_image(currentP->posX() - 1, currentP->posY()),
+				m_image(currentP->posX() + 1, currentP->posY()),
+			};
+		}
 
 		for (auto neighbour : neighbours)
 		{
@@ -114,7 +193,7 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 					}
 				}
 
-				
+
 			}
 		}
 
