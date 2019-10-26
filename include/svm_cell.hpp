@@ -1,13 +1,16 @@
 #include "svm_cell.h"
 
 template <typename T>
-SVMCell<T>::SVMCell()
+SVMCell<T>::SVMCell():
+    m_zpar(nullptr),m_parent(nullptr)
 {
 }
 
 template <typename T>
-SVMCell<T>::SVMCell(CellType type, T a, T b) : m_type(type)
+SVMCell<T>::SVMCell(CellType type, T a, T b) : m_type(type),m_zpar(nullptr),m_parent(nullptr)
 {
+    m_zpar = nullptr;
+    m_parent = nullptr;
     switch (m_type)
     {
     case CellType::New:
