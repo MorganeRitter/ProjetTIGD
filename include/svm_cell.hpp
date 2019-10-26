@@ -2,12 +2,12 @@
 
 template <typename T>
 SVMCell<T>::SVMCell():
-    m_zpar(nullptr),m_parent(nullptr)
+    m_parent(nullptr),m_zpar(nullptr)
 {
 }
 
 template <typename T>
-SVMCell<T>::SVMCell(CellType type, T a, T b) : m_type(type),m_zpar(nullptr),m_parent(nullptr)
+SVMCell<T>::SVMCell(CellType type, T a, T b) : m_type(type),m_parent(nullptr), m_zpar(nullptr)
 {
     m_zpar = nullptr;
     m_parent = nullptr;
