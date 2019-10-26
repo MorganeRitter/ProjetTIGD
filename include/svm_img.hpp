@@ -124,6 +124,7 @@ void SVMImage<T>::interpolate()
 
     // fill the remaining values
     // ordre de parcours arbitraire
+#pragma omp parallel for
     for (unsigned int l = 2; l < nbLine; l += 4)
     {
         for (unsigned int c = 2; c < nbCol; c += 4)
@@ -141,37 +142,46 @@ void SVMImage<T>::interpolate()
 
     // fill the interpixels
 
-    for (unsigned int l = 0; l < nbLine; l += 2)
-    {
-        for (unsigned int c = 1; c < nbCol; c += 2)
-        {
-            SVMCell<T> cell(CellType::Inter2,
-                            std::min(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()),
-                            std::max(i_img.at(l * nbCol + c - 1).value(), i_img.at(l * nbCol + c + 1).value()));
-            cell.posX(l);
-            cell.posY(c);
-            cell.visited(false);
-            i_img.at(l * nbCol + c) = cell;
-        }
-    }
-    std::cout << "inter2 pixels" << std::endl;
 
-    for (unsigned int c = 0; c < nbCol; c += 2)
+#pragma omp parallel for
+    for(std::size_t l = 0 ; l < nbLine ; l++)
     {
-        for (unsigned int l = 1; l < nbLine; l += 2)
+        //std::cout << omp_get_num_threads() << std::endl;
+
+        for(std::size_t c = (l+1) % 2 ; c < nbCol; c+=2)
         {
-            SVMCell<T> cell(CellType::Inter2,
-                            std::min(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()),
-                            std::max(i_img.at((l - 1) * nbCol + c).value(), i_img.at((l + 1) * nbCol + c).value()));
-            cell.posX(l);
-            cell.posY(c);
-            cell.visited(false);
-            i_img.at(l * nbCol + c) = cell;
+            if(l % 2 == 1)
+            {
+                // max and min of both neighboor original or new pixels on the same column
+                SVMCell<T> cell(CellType::Inter2,
+					std::min(i_img.at(clamp((l - 1) * nbCol + c,0ul, size-1)).value(),
+							i_img.at(clamp((l + 1) * nbCol + c,0ul,size-1)).value()),
+					std::max(i_img.at(clamp((l - 1) * nbCol + c,0ul,size-1)).value(),
+							i_img.at(clamp((l + 1) * nbCol + c,0ul,size-1)).value()));
+                cell.posX(l);
+                cell.posY(c);
+                cell.visited(false);
+                i_img.at(l * nbCol + c) = cell;
+
+            }
+            else if(l % 2 == 0)
+            {
+                // max and min of neighboor original or new pixel on the same line
+                SVMCell<T> cell(CellType::Inter2,
+					std::min(i_img.at(clamp(l * nbCol + c - 1,0ul,size-1)).value(),
+							i_img.at(clamp(l * nbCol + c + 1,0ul,size-1)).value()),
+					std::max(i_img.at(clamp(l * nbCol + c - 1,0ul,size-1)).value(),
+							i_img.at(clamp(l * nbCol + c + 1,0ul,size-1)).value()));
+                cell.posX(l);
+                cell.posY(c);
+                cell.visited(false);
+                i_img.at(l * nbCol + c) = cell;
+            }
         }
     }
-    std::cout << "inter2 pixels" << std::endl;
 
     // parcours arbitraire
+#pragma omp parallel for
     for (unsigned int l = 1; l < nbLine; l += 2)
     {
         for (unsigned int c = 1; c < nbCol; c += 2)
@@ -187,7 +197,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l * nbCol + c) = cell;
         }
     }
-    std::cout << "inter4 pixels" << std::endl;
+    std::cout << "inter pixels" << std::endl;
 
     m_image = i_img;
     m_height = nbLine;
