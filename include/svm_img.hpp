@@ -102,8 +102,8 @@ void SVMImage<T>::interpolate()
             if (l % 4 == 2)
             {
                 // max of both neighboor original pixels on the same column
-                SVMCell<T> cell(CellType::New, std::max(i_img.at(clamp((l - 2) * nbCol + c, 0ul, size)).value(),
-                                                        i_img.at(clamp((l + 2) * nbCol + c, 0ul, size)).value()));
+                SVMCell<T> cell(CellType::New, std::max(i_img.at((l - 2) * nbCol + c).value(),
+                                                        i_img.at((l + 2) * nbCol + c).value()));
                 cell.posX(l);
                 cell.posY(c);
                 cell.visited(false);
@@ -112,8 +112,8 @@ void SVMImage<T>::interpolate()
             else if (l % 4 == 0)
             {
                 // max of neighboor original pixel on the same line
-                SVMCell<T> cell(CellType::New, std::max(i_img.at(clamp(l * nbCol + c - 2, 0ul, size)).value(),
-                                                        i_img.at(clamp(l * nbCol + c + 2, 0ul, size)).value()));
+                SVMCell<T> cell(CellType::New, std::max(i_img.at(l * nbCol + c - 2).value(),
+                                                        i_img.at(l * nbCol + c + 2).value()));
                 cell.posX(l);
                 cell.posY(c);
                 cell.visited(false);
@@ -153,8 +153,8 @@ void SVMImage<T>::interpolate()
             {
                 // max and min of both neighboor original or new pixels on the same column
                 T mi, ma;
-                T valU = i_img.at(clamp((l - 1) * nbCol + c, 0ul, size)).value();
-                T valD = i_img.at(clamp((l + 1) * nbCol + c, 0ul, size)).value();
+                T valU = i_img.at((l - 1) * nbCol + c).value();
+                T valD = i_img.at((l + 1) * nbCol + c).value();
                 if (valU < valD)
                 {
                     mi = valU;
@@ -176,8 +176,8 @@ void SVMImage<T>::interpolate()
                 // max and min of neighboor original or new pixel on the same line
                 std::size_t id = l * nbCol + c;
                 T mi, ma;
-                T valL = i_img.at(clamp(id - 1, 0ul, size)).value();
-                T valR = i_img.at(clamp(id + 1, 0ul, size)).value();
+                T valL = i_img.at(id - 1).value();
+                T valR = i_img.at(id + 1).value();
                 if (valL < valR)
                 {
                     mi = valL;
