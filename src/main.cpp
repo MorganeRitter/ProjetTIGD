@@ -5,8 +5,8 @@
 #include "tos.h"
 #include <Common/Image.h>
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <chrono>
+#include <iostream>
 
 void drawUI(sf::RenderWindow &window, const sf::View &view);
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     std::cout << "SVM object created\n";
 
     auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>( stop - start ).count();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
     std::cout << "Executed in " << duration << " milliseconds" << std::endl;
 
     TOS<LibTIM::U8> tree(svm_img);
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
         }
 
         // Draw calls
-        window.clear();
+        window.clear(sf::Color(255, 255, 255));
         handler.draw(window);
         drawUI(window, view);
 
@@ -186,18 +186,17 @@ void drawUI(sf::RenderWindow &window, const sf::View &view)
     window.draw(Y, 2, sf::Lines);
 }
 
-
 template <typename T>
 void displaySVMImage(SVMImage<T> &img)
 {
-    for(std::size_t i = 0; i < img.height() ; i++)
+    for (std::size_t i = 0; i < img.height(); i++)
     {
-        for(std::size_t j = 0; j < img.width() ; j++)
+        for (std::size_t j = 0; j < img.width(); j++)
         {
-            if(img(i,j)->type() == CellType::Original || img(i,j)->type() == CellType::New)
-                std::cout << static_cast<unsigned int>(img(i,j)->value()) << " ";
-            if(img(i,j)->type() == CellType::Inter2 || img(i,j)->type() == CellType::Inter4)
-                std::cout << static_cast<unsigned int>(img(i,j)->min()) << " ";
+            if (img(i, j)->type() == CellType::Original || img(i, j)->type() == CellType::New)
+                std::cout << static_cast<unsigned int>(img(i, j)->value()) << " ";
+            if (img(i, j)->type() == CellType::Inter2 || img(i, j)->type() == CellType::Inter4)
+                std::cout << static_cast<unsigned int>(img(i, j)->min()) << " ";
         }
         std::cout << std::endl;
     }
