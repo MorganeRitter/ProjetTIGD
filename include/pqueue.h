@@ -42,7 +42,8 @@ public:
             ss << "[";
             for (int i = 0; i < q.size(); i++)
             {
-                ss << q[i]->value() << " ";
+                ss << static_cast<unsigned int>(q[i]->value());
+                ss << "(" << q[i]->posX() << "," << q[i]->posY() << ") ";
             }
             ss << "] ";
         }

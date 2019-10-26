@@ -7,7 +7,8 @@ TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 
     std::cout << "résultat du tri" << std::endl;
     for(unsigned int i = 0; i<sortedPixels.size(); i++) {
-        std::cout << static_cast<unsigned int>(sortedPixels.at(i)->value()) << "("
+        std::cout    << static_cast<unsigned int>(sortedPixels.at(i)->value())
+         << "("
             << static_cast<unsigned int>(sortedPixels.at(i)->posX()) << "," << static_cast<unsigned int>(sortedPixels.at(i)->posY()) << ")" << " " ;
     }
     std::cout << std::endl;
@@ -85,14 +86,29 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 
 	q.push(borderFace, borderValue);
 
+	// int i =0;
+
 	while (!q.empty())
 	{
+		// if(i == 100) { //71
+		// 	std::cout << "tour de boucle" << std::endl;
+		// 	return order;
+		// 	// break;
+		// }
+
+		// i++;
+
 		SVMCell<T> *currentFace = q.priority_pop(l); // h
+		// std::cout << "face select : (" << currentFace->posX() << "," << currentFace->	posY() << ")" << std::endl;
+
 		currentFace->visited(true);
 		currentFace->level(l);
 		order.push_back(currentFace);
 
-		// get neighboursighbourhood
+
+		// std::cout << "found neighbours : " <<std::endl;;
+
+		// get neighbours
         for (int j = currentFace->posY() - 1; j <= currentFace->posY() + 1; j++)
 		{
 			if(j < 0 || j >= m_image.height()) {
@@ -101,18 +117,30 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 
             for (int k = currentFace->posX() - 1; k <= currentFace->posX() + 1; k++)
 			{
-                if((j == currentFace->posY() && k == currentFace->posX()) ||  k < 0 || k >= m_image.width()) {
-					continue;
+				if((j != currentFace->posY() || k != currentFace->posX()) && k >= 0 && k < m_image.width()) {
+
+					// std::cout << "(" << k << "," << j << "), ";
+					n = m_image(k, j);
+
+					if(n->visited()) {
+						// std::cout << "seen ";
+					}
+
+					// std::cout << "done" << std::endl;
+					// std::cout << "image size is " << m_image.width() << ", " << m_image.height() << std::endl;
+
+					if (!n->visited())
+					{
+						// std::cout << "ok ";
+						neighbours.push_back(n);
+					}
 				}
 
-				n = m_image(j, k);
-
-				if (!n->visited())
-				{
-					neighbours.push_back(n);
-				}
+				
 			}
 		}
+
+		// std::cout << std::endl;
 
 		// add neighbourhood to queue
 		for (unsigned int j = 0; j < neighbours.size(); j++)
@@ -120,6 +148,9 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 			q.priority_push(neighbours[j], l);
 			neighbours[j]->visited(true);
 		}
+
+		// std::cout << "queue is now " << q << std::endl;
+
 		neighbours.clear();
 	}
 
