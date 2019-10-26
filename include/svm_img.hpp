@@ -83,8 +83,8 @@ void SVMImage<T>::interpolate()
         for (unsigned int c = 0; c < m_width; c++)
         {
             SVMCell<T> cell(CellType::Original, m_image.at(l * m_width + c).value());
-            cell.posX(l);
-            cell.posY(c);
+            cell.posX(c);
+            cell.posY(l);
             cell.visited(false);
             i_img.at((l * 4) * nbCol + (c * 4)) = cell;
         }
@@ -104,8 +104,8 @@ void SVMImage<T>::interpolate()
                 // max of both neighboor original pixels on the same column
                 SVMCell<T> cell(CellType::New, std::max(i_img.at((l - 2) * nbCol + c).value(),
                                                         i_img.at((l + 2) * nbCol + c).value()));
-                cell.posX(l);
-                cell.posY(c);
+                cell.posX(c);
+                cell.posY(l);
                 cell.visited(false);
                 i_img.at(l * nbCol + c) = cell;
             }
@@ -114,8 +114,8 @@ void SVMImage<T>::interpolate()
                 // max of neighboor original pixel on the same line
                 SVMCell<T> cell(CellType::New, std::max(i_img.at(l * nbCol + c - 2).value(),
                                                         i_img.at(l * nbCol + c + 2).value()));
-                cell.posX(l);
-                cell.posY(c);
+                cell.posX(c);
+                cell.posY(l);
                 cell.visited(false);
                 i_img.at(l * nbCol + c) = cell;
             }
@@ -132,8 +132,8 @@ void SVMImage<T>::interpolate()
             T m = std::max(std::max(i_img.at((l - 2) * nbCol + c).value(), i_img.at((l + 2) * nbCol + c).value()),
                            std::max(i_img.at(l * nbCol + c - 2).value(), i_img.at(l * nbCol + c + 2).value()));
             SVMCell<T> cell(CellType::New, m);
-            cell.posX(l);
-            cell.posY(c);
+            cell.posX(c);
+            cell.posY(l);
             cell.visited(false);
             i_img.at(l * nbCol + c) = cell;
         }
@@ -166,8 +166,8 @@ void SVMImage<T>::interpolate()
                     ma = valU;
                 }
                 SVMCell<T> cell(CellType::Inter2, mi, ma);
-                cell.posX(l);
-                cell.posY(c);
+                cell.posX(c);
+                cell.posY(l);
                 cell.visited(false);
                 i_img.at(l * nbCol + c) = cell;
             }
@@ -189,8 +189,8 @@ void SVMImage<T>::interpolate()
                     ma = valL;
                 }
                 SVMCell<T> cell(CellType::Inter2, mi, ma);
-                cell.posX(l);
-                cell.posY(c);
+                cell.posX(c);
+                cell.posY(l);
                 cell.visited(false);
                 i_img.at(l * nbCol + c) = cell;
             }
@@ -222,8 +222,8 @@ void SVMImage<T>::interpolate()
                 }
             }
             SVMCell<T> cell(CellType::Inter4, mi, ma);
-            cell.posX(l);
-            cell.posY(c);
+            cell.posX(c);
+            cell.posY(l);
             cell.visited(false);
             i_img.at(l * nbCol + c) = cell;
         }
