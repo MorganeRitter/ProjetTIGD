@@ -1,8 +1,8 @@
 #include "svm_img.h"
 #include "utils.h"
 #include <algorithm>
-#include <vector>
 #include <omp.h>
+#include <vector>
 template <typename T>
 SVMImage<T>::SVMImage(const LibTIM::Image<T> &img) : m_original(img)
 {
@@ -20,7 +20,7 @@ void SVMImage<T>::extend()
     // compute meidan value of the image
     std::vector<T> vec(m_original.begin(), m_original.end());
 
-    std::size_t size = vec.size()-1;
+    std::size_t size = vec.size() - 1;
     // we assume the image is not of size 0,0
     std::sort(vec.begin(), vec.end());
     T median;
@@ -71,9 +71,9 @@ void SVMImage<T>::interpolate()
 
     std::size_t nbCol = 2 * (n * 2 - 1) - 1;
     std::size_t nbLine = 2 * (m * 2 - 1) - 1;
-    std::size_t size = (nbCol*nbLine)-1;
+    std::size_t size = (nbCol * nbLine) - 1;
     std::cout << nbCol << " " << nbLine << std::endl;
-    std::vector<SVMCell<T>> i_img(size+1);
+    std::vector<SVMCell<T>> i_img(size + 1);
 
     std::cout << "initialized" << std::endl;
     // fill old pixels
@@ -86,35 +86,34 @@ void SVMImage<T>::interpolate()
             cell.posX(l);
             cell.posY(c);
             cell.visited(false);
-            i_img.at((l*4) * nbCol + (c*4)) = cell;
+            i_img.at((l * 4) * nbCol + (c * 4)) = cell;
         }
     }
     std::cout << "old pixels" << std::endl;
 
     // fill in new pixels
 #pragma omp parallel for
-    for(std::size_t l = 0 ; l < nbLine ; l += 2)
+    for (std::size_t l = 0; l < nbLine; l += 2)
     {
         //std::cout << omp_get_num_threads() << std::endl;
 
-        for(std::size_t c = (l+2) % 4 ; c < nbCol; c += 4)
+        for (std::size_t c = (l + 2) % 4; c < nbCol; c += 4)
         {
-            if(l % 4 == 2)
+            if (l % 4 == 2)
             {
                 // max of both neighboor original pixels on the same column
-                SVMCell<T> cell(CellType::New, std::max(i_img.at(clamp((l - 2) * nbCol + c,0ul,size)).value(),
-                                                        i_img.at(clamp((l + 2) * nbCol + c,0ul,size)).value()));
+                SVMCell<T> cell(CellType::New, std::max(i_img.at(clamp((l - 2) * nbCol + c, 0ul, size)).value(),
+                                                        i_img.at(clamp((l + 2) * nbCol + c, 0ul, size)).value()));
                 cell.posX(l);
                 cell.posY(c);
                 cell.visited(false);
                 i_img.at(l * nbCol + c) = cell;
-
             }
-            else if(l % 4 == 0)
+            else if (l % 4 == 0)
             {
                 // max of neighboor original pixel on the same line
-                SVMCell<T> cell(CellType::New, std::max(i_img.at(clamp(l * nbCol + c - 2,0ul,size)).value(),
-                                                        i_img.at(clamp(l * nbCol + c + 2,0ul,size)).value()));
+                SVMCell<T> cell(CellType::New, std::max(i_img.at(clamp(l * nbCol + c - 2, 0ul, size)).value(),
+                                                        i_img.at(clamp(l * nbCol + c + 2, 0ul, size)).value()));
                 cell.posX(l);
                 cell.posY(c);
                 cell.visited(false);
@@ -143,37 +142,53 @@ void SVMImage<T>::interpolate()
 
     // fill the interpixels
 
-
 #pragma omp parallel for
-    for(std::size_t l = 0 ; l < nbLine ; l++)
+    for (std::size_t l = 0; l < nbLine; l++)
     {
         //std::cout << omp_get_num_threads() << std::endl;
 
-        for(std::size_t c = (l+1) % 2 ; c < nbCol; c+=2)
+        for (std::size_t c = (l + 1) % 2; c < nbCol; c += 2)
         {
-            if(l % 2 == 1)
+            if (l % 2 == 1)
             {
                 // max and min of both neighboor original or new pixels on the same column
                 T mi, ma;
-                T valU = i_img.at(clamp((l - 1) * nbCol + c,0ul,size)).value();
-                T valD = i_img.at(clamp((l + 1) * nbCol + c,0ul,size)).value();
-                if(valU < valD) { mi = valU; ma = valD; } else {mi = valD; ma = valU;}
-                SVMCell<T> cell(CellType::Inter2,mi,ma);
+                T valU = i_img.at(clamp((l - 1) * nbCol + c, 0ul, size)).value();
+                T valD = i_img.at(clamp((l + 1) * nbCol + c, 0ul, size)).value();
+                if (valU < valD)
+                {
+                    mi = valU;
+                    ma = valD;
+                }
+                else
+                {
+                    mi = valD;
+                    ma = valU;
+                }
+                SVMCell<T> cell(CellType::Inter2, mi, ma);
                 cell.posX(l);
                 cell.posY(c);
                 cell.visited(false);
                 i_img.at(l * nbCol + c) = cell;
-
             }
-            else if(l % 2 == 0)
+            else if (l % 2 == 0)
             {
                 // max and min of neighboor original or new pixel on the same line
                 std::size_t id = l * nbCol + c;
                 T mi, ma;
-                T valL = i_img.at(clamp(id-1,0ul,size)).value();
-                T valR = i_img.at(clamp(id+1,0ul,size)).value();
-                if(valL < valR) { mi = valL; ma = valR; } else {mi = valR; ma = valL;}
-                SVMCell<T> cell(CellType::Inter2,mi,ma);
+                T valL = i_img.at(clamp(id - 1, 0ul, size)).value();
+                T valR = i_img.at(clamp(id + 1, 0ul, size)).value();
+                if (valL < valR)
+                {
+                    mi = valL;
+                    ma = valR;
+                }
+                else
+                {
+                    mi = valR;
+                    ma = valL;
+                }
+                SVMCell<T> cell(CellType::Inter2, mi, ma);
                 cell.posX(l);
                 cell.posY(c);
                 cell.visited(false);
@@ -195,7 +210,17 @@ void SVMImage<T>::interpolate()
                           i_img.at(l * nbCol + c + 1).value()};
             T mi = values[0];
             T ma = mi;
-            for(std::size_t i = 1; i<4;i++){if(values[i]<mi){mi=values[i];}else if(values[i]>ma){ma=values[i];}}
+            for (std::size_t i = 1; i < 4; i++)
+            {
+                if (values[i] < mi)
+                {
+                    mi = values[i];
+                }
+                else if (values[i] > ma)
+                {
+                    ma = values[i];
+                }
+            }
             SVMCell<T> cell(CellType::Inter4, mi, ma);
             cell.posX(l);
             cell.posY(c);
@@ -219,13 +244,13 @@ const std::vector<SVMCell<T>> &SVMImage<T>::data() const
 template <typename T>
 SVMCell<T> *SVMImage<T>::operator()(std::size_t i, std::size_t j)
 {
-    return &(m_image.at(m_width * i + j));
+    return &(m_image.at(m_width * j + i));
 }
 
 template <typename T>
 SVMCell<T> &SVMImage<T>::get(int i, int j)
 {
-    return m_image.at(m_width * i + j);
+    return m_image.at(m_width * j + i);
 }
 
 template <typename T>
