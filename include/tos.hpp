@@ -81,7 +81,6 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 	T borderValue = borderFace->value();		// l_infinite
 	std::size_t initialLevel = static_cast<std::size_t>(borderValue);
 
-	unsigned int i = 0;
 	std::size_t l = initialLevel;
 
 	q.push(borderFace, borderValue);
@@ -93,16 +92,16 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 		currentFace->level(l);
 		order.push_back(currentFace);
 
-		// get neighbourhood
-        for (int j = currentFace->posY() - 1; j <currentFace->posY() + 1; j++)
+		// get neighboursighbourhood
+        for (int j = currentFace->posY() - 1; j <= currentFace->posY() + 1; j++)
 		{
-			if(j < 0 || j > m_image.height()) {
+			if(j < 0 || j >= m_image.height()) {
 				continue;
 			}
 
-            for (int k = currentFace->posX() - 1; k < currentFace->posX() + 1; k++)
+            for (int k = currentFace->posX() - 1; k <= currentFace->posX() + 1; k++)
 			{
-                if((j == currentFace->posY() && k == currentFace->posX()) ||  k < 0 || k > m_image.width()) {
+                if((j == currentFace->posY() && k == currentFace->posX()) ||  k < 0 || k >= m_image.width()) {
 					continue;
 				}
 
@@ -122,7 +121,6 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 			neighbours[j]->visited(true);
 		}
 		neighbours.clear();
-        i++; // unused !!!
 	}
 
 	return order;

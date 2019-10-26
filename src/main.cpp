@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
     std::cout << "SVM object created\n";
 
     auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>( stop - start ).count();
-    std::cout << "Executed in " << duration << "seconds" << std::endl;
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>( stop - start ).count();
+    std::cout << "Executed in " << duration << " milliseconds" << std::endl;
 
     TOS<LibTIM::U8> tree(svm_img);
 
