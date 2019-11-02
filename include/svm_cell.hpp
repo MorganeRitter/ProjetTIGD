@@ -73,3 +73,24 @@ template <typename T>
 inline SVMCell<T> *SVMCell<T>::parent() const { return m_parent; }
 template <typename T>
 inline SVMCell<T> *SVMCell<T>::zpar() const { return m_zpar; }
+
+
+template <typename T>
+bool areSameVal(const SVMCell<T> &a, const SVMCell<T> &b)
+{
+    if(a.type() < 2 && b.type() < 2)
+    {
+        if(a.value() == b.value())
+            return true;
+        else
+            return false;
+    }
+    else if(a.type() > 1 && b.type() > 1)
+    {
+        if(a.min() == b.min() && a.max() == b.max())
+            return true;
+        else
+            return false;
+    }
+    return false;
+}

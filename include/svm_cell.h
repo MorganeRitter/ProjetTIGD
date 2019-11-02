@@ -7,10 +7,10 @@
 // A SVMCell can be of four types:
 enum CellType
 {
-    Original, // a cell directly generated from the original 2D image, holding the value of the original pixel
-    New,      // a cell between two Original cell, holding the highest value of the Original cell in its neighbourhood
-    Inter2,   // a cell between an Original and a New cell (up/down or left/right), holding the value range from the lowest value of the surround cells to the highest value
-    Inter4    // a cell between an four Inter2 cells (up/down and left/right), holding the value range from the lowest value of the surround cells to the highest value
+    Original = 0, // a cell directly generated from the original 2D image, holding the value of the original pixel
+    New = 1,      // a cell between two Original cell, holding the highest value of the Original cell in its neighbourhood
+    Inter2 = 2,   // a cell between an Original and a New cell (up/down or left/right), holding the value range from the lowest value of the surround cells to the highest value
+    Inter4 = 3    // a cell between an four Inter2 cells (up/down and left/right), holding the value range from the lowest value of the surround cells to the highest value
 };
 
 //   __________ ___________ __________ ____________ __________
@@ -84,6 +84,9 @@ private:
         };
     };
 };
+
+template <typename T>
+bool areSameVal(const SVMCell<T> &a, const SVMCell<T> &b);
 
 #include "svm_cell.hpp"
 

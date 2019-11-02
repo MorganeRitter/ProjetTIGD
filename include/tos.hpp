@@ -208,3 +208,16 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 
 	return order;
 }
+
+template <typename T>
+void TOS<T>::canonize(std::vector<SVMCell<T> *> R)
+{
+    for(auto p = R.end() ; p != R.begin() ; p--)
+    {
+        SVMCell<T> *q = *p;
+        if(areSameVal(*q,*p))
+        {
+            *p->parent(q->parent());
+        }
+    }
+}

@@ -16,6 +16,7 @@ public:
     SVMCell<T> *findRoot(SVMCell<T> *current);
     std::vector<SVMCell<T> *> computeTree();
     std::vector<SVMCell<T> *> sort();
+    void canonize(std::vector<SVMCell<T> *>);
 
 private:
     SVMImage<T> &m_image;
