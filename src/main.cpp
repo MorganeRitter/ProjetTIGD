@@ -43,11 +43,11 @@ int main(int argc, char *argv[])
     SVMImage<LibTIM::U8> svm_img(im);
     std::cout << "SVM object created\n";
 
+    TOS<LibTIM::U8> tree(svm_img);
+
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
-    std::cout << "Executed in " << duration << " milliseconds" << std::endl;
-
-    TOS<LibTIM::U8> tree(svm_img);
+    std::cout << "Tree computation executed in " << duration << " milliseconds" << std::endl;
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
 
     // Variables needed to compute mouse position changes (panning)
     sf::Vector2f newPos, oldPos;
+    sf::Vector2f mousePos;
 
     // Flag which indicates when the lef button is in the down position
     bool mouseButtonDown = false;
@@ -130,6 +131,13 @@ int main(int argc, char *argv[])
                 window.setView(view);
             }
 
+            if (event.type == sf::Event::MouseMoved)
+            {
+                mousePos = window.mapPixelToCoords({event.mouseMove.x, event.mouseMove.y});
+
+                std::cout << mousePos.x << " " << mousePos.y << std::endl;
+            }
+
             if (mouseButtonDown)
             {
                 newPos = window.mapPixelToCoords({event.mouseMove.x, event.mouseMove.y});
@@ -144,6 +152,8 @@ int main(int argc, char *argv[])
         // Draw calls
         window.clear(sf::Color(255, 255, 255));
         handler.draw(window);
+        tree.drawParents(window, mousePos);
+        //tree.draw(window);
         drawUI(window, view);
 
         window.display();
