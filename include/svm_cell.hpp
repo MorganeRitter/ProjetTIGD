@@ -1,13 +1,12 @@
 #include "svm_cell.h"
 
 template <typename T>
-SVMCell<T>::SVMCell():
-    m_parent(nullptr),m_zpar(nullptr)
+SVMCell<T>::SVMCell() : m_parent(nullptr), m_zpar(nullptr)
 {
 }
 
 template <typename T>
-SVMCell<T>::SVMCell(CellType type, T a, T b) : m_type(type),m_parent(nullptr), m_zpar(nullptr)
+SVMCell<T>::SVMCell(CellType type, T a, T b) : m_type(type), m_parent(nullptr), m_zpar(nullptr)
 {
     m_zpar = nullptr;
     m_parent = nullptr;
@@ -74,20 +73,19 @@ inline SVMCell<T> *SVMCell<T>::parent() const { return m_parent; }
 template <typename T>
 inline SVMCell<T> *SVMCell<T>::zpar() const { return m_zpar; }
 
-
 template <typename T>
 bool areSameVal(const SVMCell<T> &a, const SVMCell<T> &b)
 {
-    if(a.type() < 2 && b.type() < 2)
+    if (a.type() < 2 && b.type() < 2)
     {
-        if(a.value() == b.value())
+        if (a.value() == b.value())
             return true;
         else
             return false;
     }
-    else if(a.type() > 1 && b.type() > 1)
+    else if (a.type() > 1 && b.type() > 1)
     {
-        if(a.min() == b.min() && a.max() == b.max())
+        if (a.min() == b.min() && a.max() == b.max())
             return true;
         else
             return false;
