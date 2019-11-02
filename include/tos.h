@@ -3,6 +3,7 @@
 
 #include "pqueue.h"
 #include "svm_img.h"
+#include <SFML/Graphics.hpp>
 #include <vector>
 
 template <typename T>
@@ -12,14 +13,18 @@ public:
     TOS(SVMImage<T> &img);
 
     // R comes from sort
-    SVMCell<T> *unionFind(std::vector<SVMCell<T> *> R);
-    SVMCell<T> *findRoot(SVMCell<T> *current);
-    std::vector<SVMCell<T> *> computeTree();
     std::vector<SVMCell<T> *> sort();
-    void canonize(std::vector<SVMCell<T> *>);
+
+    void unionFind();
+    void canonize();
+
+    void drawParents(sf::RenderWindow &window, const sf::Vector2f &pos);
 
 private:
+    SVMCell<T> *findRoot(SVMCell<T> *current);
+
     SVMImage<T> &m_image;
+    std::vector<SVMCell<T> *> sortedPixels;
 };
 
 #include "tos.hpp"
