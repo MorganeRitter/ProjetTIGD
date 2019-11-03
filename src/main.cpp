@@ -45,6 +45,10 @@ int main(int argc, char *argv[])
 
     TOS<LibTIM::U8> tree(svm_img);
 
+    svm_img.uninterpolate();
+
+
+
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
     std::cout << "Tree computation executed in " << duration << " milliseconds" << std::endl;
