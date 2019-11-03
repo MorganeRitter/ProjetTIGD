@@ -134,8 +134,6 @@ int main(int argc, char *argv[])
             if (event.type == sf::Event::MouseMoved)
             {
                 mousePos = window.mapPixelToCoords({event.mouseMove.x, event.mouseMove.y});
-
-                std::cout << mousePos.x << " " << mousePos.y << std::endl;
             }
 
             if (mouseButtonDown)
