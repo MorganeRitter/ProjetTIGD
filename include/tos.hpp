@@ -179,7 +179,15 @@ void TOS<T>::drawParents(sf::RenderWindow &window, const sf::Vector2f &pos)
 		SVMCell<T> *current = cell->parent();
 		while (current->parent() != current)
 		{
-            vertices.push_back(sf::Vertex(sf::Vector2f(current->posX()+0.5f, current->posY()+0.5f), sf::Color::Green));
+            if(current->type() == CellType::New || current->type() == CellType::Original)
+            {
+                vertices.push_back(sf::Vertex(sf::Vector2f(current->posX()+0.5f, current->posY()+0.5f), sf::Color::Green));
+            }
+            else
+            {
+                vertices.push_back(sf::Vertex(sf::Vector2f(current->posX()+0.5f, current->posY()+0.5f), sf::Color::Blue));
+            }
+
 			current = current->parent();
 		}
         window.draw(vertices.data(), vertices.size(), sf::LinesStrip);
