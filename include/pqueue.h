@@ -42,8 +42,16 @@ public:
             ss << "[";
             for (int i = 0; i < q.size(); i++)
             {
-                ss << static_cast<unsigned int>(q[i]->value());
-                ss << "(" << q[i]->posX() << "," << q[i]->posY() << ") ";
+                if(q[i]->type() == CellType::New || q[i]->type() == CellType::Original)
+                {
+                    ss << static_cast<unsigned int>(q[i]->value());
+                    ss << "(" << q[i]->posX() << "," << q[i]->posY() << ") ";
+                }
+                else
+                {
+                    ss << "<" << static_cast<unsigned int>(q[i]->min()) << "," << static_cast<unsigned int>(q[i]->max()) << ">";
+                    ss << "(" << q[i]->posX() << "," << q[i]->posY() << ") ";
+                }
             }
             ss << "] ";
         }

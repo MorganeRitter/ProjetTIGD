@@ -22,11 +22,11 @@ TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 	}
 	std::cout << "done" << std::endl;*/
 	canonize();
-	/*for (unsigned int i = 0; i < sortedPixels.size(); i++)
+    /*for (unsigned int i = 0; i < sortedPixels.size(); i++)
 	{
 		std::cout << "[" << i << "] " << sortedPixels.at(i)->parent() << std::endl;
 	}
-	std::cout << "done" << std::endl;*/
+    std::cout << "done" << std::endl;*/
 }
 
 template <typename T>
@@ -137,7 +137,7 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 		// add neighbourhood to queue
 		for (unsigned int j = 0; j < neighbours.size(); j++)
 		{
-            q.priority_push(neighbours[j], &l);
+            q.priority_push(neighbours[j], l);
 			neighbours[j]->visited(true);
 		}
 		neighbours.clear();
