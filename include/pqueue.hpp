@@ -38,7 +38,7 @@ SVMCell<T> *PQueue<T>::pop(std::size_t level)
 }
 
 template <typename T>
-void PQueue<T>::priority_push(SVMCell<T> *cell, std::size_t level)
+void PQueue<T>::priority_push(SVMCell<T> *cell, std::size_t *level)
 {
     std::size_t lower;
     std::size_t upper;
@@ -55,31 +55,31 @@ void PQueue<T>::priority_push(SVMCell<T> *cell, std::size_t level)
         upper = static_cast<std::size_t>(cell->value());
     }
 
-    if (lower > level)
+    if (lower > *level)
     {
         levelToPush = lower;
     }
-    else if (upper < level)
+    else if (upper < *level)
     {
         levelToPush = upper;
     }
     else
     {
-        levelToPush = level;
+        levelToPush = *level;
     }
 
     push(cell, levelToPush);
 }
 
 template <typename T>
-SVMCell<T> *PQueue<T>::priority_pop(std::size_t level)
+SVMCell<T> *PQueue<T>::priority_pop(std::size_t *level)
 {
-    std::size_t currentLevel = level;
-    while (m_pqueue[currentLevel].size() == 0)
+    //std::size_t currentLevel = *level;
+    while (m_pqueue[*level].size() == 0)
     {
-        currentLevel = (currentLevel + 1) % m_pqueue.size();
+        *level = (*level + 1) % m_pqueue.size();
     }
-    return (pop(currentLevel));
+    return (pop(*level));
 }
 
 template <typename T>
@@ -106,11 +106,11 @@ bool PQueue<T>::empty() const
 }
 
 template <typename T>
-bool PQueue<T>::levelIsEmpty(std::size_t level) const
+bool PQueue<T>::levelIsEmpty(std::size_t *level) const
 {
-    if (level < m_pqueue.size())
+    if (*level < m_pqueue.size())
     {
-        return m_pqueue.at(level).empty();
+        return m_pqueue.at(*level).empty();
     }
     else
     {
