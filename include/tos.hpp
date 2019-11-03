@@ -21,7 +21,7 @@ TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 		std::cout << (sortedPixels.at(i)->parent() == sortedPixels.at(i) ? "same" : "diff") << std::endl;
 	}
 	std::cout << "done" << std::endl;*/
-	canonize();
+    canonize();
     /*for (unsigned int i = 0; i < sortedPixels.size(); i++)
 	{
 		std::cout << "[" << i << "] " << sortedPixels.at(i)->parent() << std::endl;
@@ -175,11 +175,11 @@ void TOS<T>::drawParents(sf::RenderWindow &window, const sf::Vector2f &pos)
 	{
 		std::vector<sf::Vertex> vertices;
 		SVMCell<T> *cell = m_image(static_cast<std::size_t>(pos.x), static_cast<std::size_t>(pos.y));
-		vertices.push_back(sf::Vertex(sf::Vector2f(cell->posX(), cell->posY()), sf::Color::Red));
+        vertices.push_back(sf::Vertex(sf::Vector2f(cell->posX()+0.5f, cell->posY()+0.5f), sf::Color::Red));
 		SVMCell<T> *current = cell->parent();
 		while (current->parent() != current)
 		{
-			vertices.push_back(sf::Vertex(sf::Vector2f(current->posX(), current->posY()), sf::Color::Green));
+            vertices.push_back(sf::Vertex(sf::Vector2f(current->posX()+0.5f, current->posY()+0.5f), sf::Color::Green));
 			current = current->parent();
 		}
         window.draw(vertices.data(), vertices.size(), sf::LinesStrip);
