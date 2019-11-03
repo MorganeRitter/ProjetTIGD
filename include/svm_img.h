@@ -24,6 +24,7 @@ public:
 
     // getter for a pixel @ pos [i,j]
     SVMCell<T> *operator()(std::size_t i, std::size_t j);
+    void uninterpolate();
 
 private:
     // add 1 pixel at the border of value median(Image)
@@ -31,6 +32,8 @@ private:
 
     // interpolate the image
     void interpolate();
+
+
 
     SVMCell<T> &get(int i, int j);
     void constructSVMImage();

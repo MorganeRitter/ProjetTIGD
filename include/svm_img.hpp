@@ -236,6 +236,19 @@ void SVMImage<T>::interpolate()
 }
 
 template <typename T>
+void SVMImage<T>::uninterpolate()
+{
+    for(auto cell : m_image)
+    {
+        while((cell.parent()->type() == CellType::Inter2 || cell.parent()->type() == CellType::Inter4) && cell.parent() != &cell)
+        {
+            cell.parent(cell.parent()->parent());
+        }
+        std::cout << "cell.parent()->type():" << cell.parent()->type() << std::endl;
+    }
+}
+
+template <typename T>
 const std::vector<SVMCell<T>> &SVMImage<T>::data() const
 {
     return m_image;
