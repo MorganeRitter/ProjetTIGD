@@ -101,11 +101,11 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 
 	std::size_t l = initialLevel;
 
-	q.push(borderFace, borderValue);
+    q.push(borderFace, borderValue);
 
 	while (!q.empty())
 	{
-		SVMCell<T> *currentFace = q.priority_pop(l); // h
+        SVMCell<T> *currentFace = q.priority_pop(&l); // h
 
 		currentFace->visited(true);
 		currentFace->level(l);
@@ -137,7 +137,7 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 		// add neighbourhood to queue
 		for (unsigned int j = 0; j < neighbours.size(); j++)
 		{
-			q.priority_push(neighbours[j], l);
+            q.priority_push(neighbours[j], &l);
 			neighbours[j]->visited(true);
 		}
 		neighbours.clear();
@@ -150,7 +150,7 @@ template <typename T>
 void TOS<T>::canonize()
 {
 	// for all p in [R in reverse order]
-#pragma omp parallel for
+//#pragma omp parallel for
     for (long int i = sortedPixels.size() - 1; i >= 0; i--)
 	{
 		SVMCell<T> *p = sortedPixels[i];
@@ -182,6 +182,6 @@ void TOS<T>::drawParents(sf::RenderWindow &window, const sf::Vector2f &pos)
 			vertices.push_back(sf::Vertex(sf::Vector2f(current->posX(), current->posY()), sf::Color::Green));
 			current = current->parent();
 		}
-		window.draw(vertices.data(), vertices.size(), sf::LineStrip);
+        window.draw(vertices.data(), vertices.size(), sf::LineStrip);
 	}
 }
