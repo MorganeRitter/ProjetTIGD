@@ -76,7 +76,7 @@ inline SVMCell<T> *SVMCell<T>::zpar() const { return m_zpar; }
 template <typename T>
 bool areSameVal(const SVMCell<T> &a, const SVMCell<T> &b)
 {
-    if ((a.type() == CellType::New || a.type() == CellType::Original) && (b.type() == CellType::New || b.type() == CellType::Original))
+    /*if ((a.type() == CellType::New || a.type() == CellType::Original) && (b.type() == CellType::New || b.type() == CellType::Original))
     {
         if (a.value() == b.value())
             return true;
@@ -89,6 +89,10 @@ bool areSameVal(const SVMCell<T> &a, const SVMCell<T> &b)
             return true;
         else
             return false;
+    }*/
+    if(a.level() == b.level())
+    {
+        return true;
     }
     return false;
 }
