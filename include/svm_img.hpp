@@ -20,7 +20,7 @@ void SVMImage<T>::extend()
     // compute meidan value of the image
     std::vector<T> vec(m_original.begin(), m_original.end());
 
-    std::size_t size = vec.size();
+    std::size_t size = vec.size() - 1;
     // we assume the image is not of size 0,0
     std::sort(vec.begin(), vec.end());
     T median;
