@@ -182,6 +182,6 @@ void TOS<T>::drawParents(sf::RenderWindow &window, const sf::Vector2f &pos)
 			vertices.push_back(sf::Vertex(sf::Vector2f(current->posX(), current->posY()), sf::Color::Green));
 			current = current->parent();
 		}
-        window.draw(vertices.data(), vertices.size(), sf::LineStrip);
+        window.draw(vertices.data(), vertices.size(), sf::LinesStrip);
 	}
 }
