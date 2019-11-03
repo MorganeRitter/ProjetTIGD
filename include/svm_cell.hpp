@@ -76,14 +76,14 @@ inline SVMCell<T> *SVMCell<T>::zpar() const { return m_zpar; }
 template <typename T>
 bool areSameVal(const SVMCell<T> &a, const SVMCell<T> &b)
 {
-    if (a.type() < 2 && b.type() < 2)
+    if ((a.type() == CellType::New || a.type() == CellType::Original) && (b.type() == CellType::New || b.type() == CellType::Original))
     {
         if (a.value() == b.value())
             return true;
         else
             return false;
     }
-    else if (a.type() > 1 && b.type() > 1)
+    else if ((a.type() == CellType::Inter2 || a.type() == CellType::Inter2) && (b.type() == CellType::Inter4 || b.type() == CellType::Inter4))
     {
         if (a.min() == b.min() && a.max() == b.max())
             return true;
