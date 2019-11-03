@@ -18,7 +18,7 @@ public:
     SVMCell<T> *pop(std::size_t level);
 
     // push <cell> in queue, with level <level> used to find definitive level
-    void priority_push(SVMCell<T> *cell, std::size_t *level);
+    void priority_push(SVMCell<T> *cell, std::size_t level);
     // pop the next cell to handle, with level <level> used to find the next one to read
     SVMCell<T> *priority_pop(std::size_t *level);
 
@@ -27,7 +27,7 @@ public:
     // check if the PQueue is empty
     bool empty() const;
     // check if a certain queue in a PQueue is empty
-    bool levelIsEmpty(std::size_t *level) const;
+    bool levelIsEmpty(std::size_t level) const;
 
     /*debug:
     Pqueue pq;
