@@ -83,8 +83,8 @@ void SVMImage<T>::interpolate()
         for (unsigned int c = 0; c < m_width; c++)
         {
             SVMCell<T> cell(CellType::Original, m_image.at(l * m_width + c).value());
-            cell.posX(c);
-            cell.posY(l);
+            cell.posX(c*4);
+            cell.posY(l*4);
             cell.visited(false);
             i_img.at((l * 4) * nbCol + (c * 4)) = cell;
         }
@@ -236,16 +236,42 @@ void SVMImage<T>::interpolate()
 }
 
 template <typename T>
-void SVMImage<T>::uninterpolate()
+void SVMImage<T>::uninterpolate(TOS<T> *tree)
 {
+    tree->clean();
+    std::cout << "tree is clean" << std::endl;
+
+
     for(auto cell : m_image)
     {
-        while((cell.parent()->type() == CellType::Inter2 || cell.parent()->type() == CellType::Inter4) && cell.parent() != &cell)
+        // if current is original, adjust position for uninterpolation
+        if(cell.type() == CellType::Original)
         {
-            cell.parent(cell.parent()->parent());
+            cell.posX(cell.posX()/4);
+            cell.posY(cell.posY()/4);
         }
-        std::cout << "cell.parent()->type():" << cell.parent()->type() << std::endl;
+        SVMCell<T> *current = &cell;
+        while(current != current->parent())
+        {
+            // if parent is not original
+            if(current->parent()->type() != CellType::Original)
+                current->parent(current->parent()->parent());
+            else // if it is original, move forward
+                current = current->parent();
+        }
     }
+
+    // remove all non-original cells
+    for(auto it=m_image.begin() ; it != m_image.end() ;)
+    {
+        if((*it).type() != CellType::Original)
+            m_image.erase(it);
+        else
+            it++;
+    }
+
+    m_width = m_original.getSizeX()+2;
+    m_height = m_original.getSizeY()+2;
 }
 
 template <typename T>
