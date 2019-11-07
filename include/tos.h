@@ -18,6 +18,8 @@ public:
     void unionFind();
     void canonize();
 
+    void clean();
+
     void drawParents(sf::RenderWindow &window, const sf::Vector2f &pos);
 
 private:

@@ -3,193 +3,218 @@
 template <typename T>
 TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 {
-	sortedPixels = sort();
-
-	/*std::cout << "résultat du tri " << std::endl;
-	for (unsigned int i = 0; i < sortedPixels.size(); i++)
-	{
-		std::cout
-			<< static_cast<unsigned int>(sortedPixels.at(i)->value()) << "("
-			<< static_cast<unsigned int>(sortedPixels.at(i)->posX()) << ","
-			<< static_cast<unsigned int>(sortedPixels.at(i)->posY()) << ")"
-			<< " ";
-	}
-	std::cout << std::endl;*/
-	unionFind();
-	/*for (unsigned int i = 0; i < sortedPixels.size(); i++)
-	{
-		std::cout << (sortedPixels.at(i)->parent() == sortedPixels.at(i) ? "same" : "diff") << std::endl;
-	}
-	std::cout << "done" << std::endl;*/
+    sortedPixels = sort();
+    std::cout << "sort" << std::endl;
+    unionFind();
+    std::cout << "union find" << std::endl;
     canonize();
-    /*for (unsigned int i = 0; i < sortedPixels.size(); i++)
-	{
-		std::cout << "[" << i << "] " << sortedPixels.at(i)->parent() << std::endl;
-	}
-    std::cout << "done" << std::endl;*/
+    std::cout << "canonize" << std::endl;
 }
 
 template <typename T>
 void TOS<T>::unionFind()
 {
-	//std::cout << "Taille" << m_image.width() << " " << m_image.height() << '\n';
-	for (int i = sortedPixels.size() - 1; i >= 0; i--)
-	{
-		SVMCell<T> *currentP = sortedPixels[i];
-		currentP->parent(currentP);
-		currentP->zpar(currentP);
+    //std::cout << "Taille" << m_image.width() << " " << m_image.height() << '\n';
+    for (int i = sortedPixels.size() - 1; i >= 0; i--)
+    {
+        SVMCell<T> *currentP = sortedPixels[i];
+        currentP->parent(currentP);
+        currentP->zpar(currentP);
 
-		std::vector<SVMCell<T> *> neighbours;
+        std::vector<SVMCell<T> *> neighbours;
 
-		for (int j = currentP->posY() - 1; j <= currentP->posY() + 1; j++)
-		{
-			if (j < 0 || j >= m_image.height())
-			{
-				continue;
-			}
+        for (int j = currentP->posY() - 1; j <= currentP->posY() + 1; j++)
+        {
+            if (j < 0 || j >= m_image.height())
+            {
+                continue;
+            }
 
-			for (int k = currentP->posX() - 1; k <= currentP->posX() + 1; k++)
-			{
-				if ((j != currentP->posY() || k != currentP->posX()) && k >= 0 && k < m_image.width())
-				{
-					neighbours.push_back(m_image(k, j));
-				}
-			}
-		}
+            for (int k = currentP->posX() - 1; k <= currentP->posX() + 1; k++)
+            {
+                if ((j != currentP->posY() || k != currentP->posX()) && k >= 0 && k < m_image.width())
+                {
+                    neighbours.push_back(m_image(k, j));
+                }
+            }
+        }
 
-		for (auto neighbour : neighbours)
-		{
-			if (neighbour->zpar() != nullptr)
-			{
-				SVMCell<T> *root = findRoot(neighbour);
-				if (root != currentP)
-				{
-					root->parent(currentP);
-					root->zpar(currentP);
-				}
-			}
-		}
-	}
+        for (auto neighbour : neighbours)
+        {
+            if (neighbour->zpar() != nullptr)
+            {
+                SVMCell<T> *root = findRoot(neighbour);
+                if (root != currentP)
+                {
+                    root->parent(currentP);
+                    root->zpar(currentP);
+                }
+            }
+        }
+    }
 }
 template <typename T>
 SVMCell<T> *TOS<T>::findRoot(SVMCell<T> *current)
 {
-	if (current->zpar() == current)
-	{
-		return current;
-	}
-	else
-	{
-		current->zpar(findRoot(current->zpar()));
-		return current->zpar();
-	}
+    if (current->zpar() == current)
+    {
+        return current;
+    }
+    else
+    {
+        current->zpar(findRoot(current->zpar()));
+        return current->zpar();
+    }
 }
 
 template <typename T>
 std::vector<SVMCell<T> *> TOS<T>::sort()
 {
-	PQueue<T> q;
-	std::vector<SVMCell<T> *> order;
+    PQueue<T> q;
+    std::vector<SVMCell<T> *> order;
 
-	std::vector<SVMCell<T> *> neighbours;
-	SVMCell<T> *n;
+    std::vector<SVMCell<T> *> neighbours;
+    SVMCell<T> *n;
 
-	// get first level
-	SVMCell<T> *borderFace = m_image(0, 0); // p_infinite
-	T borderValue = borderFace->value();	// l_infinite
-	std::size_t initialLevel = static_cast<std::size_t>(borderValue);
+    // get first level
+    SVMCell<T> *borderFace = m_image(0, 0); // p_infinite
+    T borderValue = borderFace->value();	// l_infinite
+    std::size_t initialLevel = static_cast<std::size_t>(borderValue);
 
-	std::size_t l = initialLevel;
+    std::size_t l = initialLevel;
 
     q.push(borderFace, borderValue);
 
-	while (!q.empty())
-	{
+    while (!q.empty())
+    {
         SVMCell<T> *currentFace = q.priority_pop(&l); // h
 
-		currentFace->visited(true);
-		currentFace->level(l);
-		order.push_back(currentFace);
+        currentFace->visited(true);
+        currentFace->level(l);
+        order.push_back(currentFace);
 
-		// get neighbours
-		for (int j = currentFace->posY() - 1; j <= currentFace->posY() + 1; j++)
-		{
-			if (j < 0 || j >= m_image.height())
-			{
-				continue;
-			}
+        // get neighbours
+        for (int j = currentFace->posY() - 1; j <= currentFace->posY() + 1; j++)
+        {
+            if (j < 0 || j >= m_image.height())
+            {
+                continue;
+            }
 
-			for (int k = currentFace->posX() - 1; k <= currentFace->posX() + 1; k++)
-			{
-				if ((j != currentFace->posY() || k != currentFace->posX()) && k >= 0 && k < m_image.width())
-				{
+            for (int k = currentFace->posX() - 1; k <= currentFace->posX() + 1; k++)
+            {
+                if ((j != currentFace->posY() || k != currentFace->posX()) && k >= 0 && k < m_image.width())
+                {
 
-					n = m_image(k, j);
+                    n = m_image(k, j);
 
-					if (!n->visited())
-					{
-						neighbours.push_back(n);
-					}
-				}
-			}
-		}
+                    if (!n->visited())
+                    {
+                        neighbours.push_back(n);
+                    }
+                }
+            }
+        }
 
-		// add neighbourhood to queue
-		for (unsigned int j = 0; j < neighbours.size(); j++)
-		{
+        // add neighbourhood to queue
+        for (unsigned int j = 0; j < neighbours.size(); j++)
+        {
             q.priority_push(neighbours[j], l);
-			neighbours[j]->visited(true);
-		}
-		neighbours.clear();
-	}
+            neighbours[j]->visited(true);
+        }
+        neighbours.clear();
+    }
 
-	return order;
+    return order;
 }
 
 template <typename T>
 void TOS<T>::canonize()
 {
-	// for all p in [R in reverse order]
-//#pragma omp parallel for
+    // for all p in [R in reverse order]
+#pragma omp parallel for
     for (long int i = sortedPixels.size() - 1; i >= 0; i--)
-	{
-		SVMCell<T> *p = sortedPixels[i];
+    {
+        //std::cout << i << std::endl;
+        SVMCell<T> *p = sortedPixels[i];
 
-		// q <- parent(p)
-		SVMCell<T> *q = p->parent();
+        // q <- parent(p)
+        SVMCell<T> *q = p->parent();
+        SVMCell<T> *prev = p;
 
-		// if f(parent(q) == f(q)
-		if (areSameVal(*(q->parent()), *q)) // See svm_cell.h
-		{
-			//std::cout << "same val" << std::endl;
-			// parent(p) <- parent(q)
-			p->parent(q->parent());
-		}
-	}
+        // if f(parent(q) == f(q)
+
+
+        while (q->parent()->level() == q->level() && q->parent() != q) // See svm_cell.h
+        {
+            //std::cout << q->parent()->level() << " " << q->level() << " move" << std::endl;
+            prev = q;
+            q = q->parent();
+            if(q->parent() == q)
+            {
+                p->parent(prev);
+                //std::cout << "same" << std::endl;
+
+            }
+        }
+
+        if(q->parent()->level() != q->level())
+        {
+            p->parent(q->parent());
+        }
+    }
+}
+
+template <typename T>
+void TOS<T>::clean()
+{
+    for(auto it = sortedPixels.begin() ; it != sortedPixels.end() ; ++ it)
+    {
+        if((*it)->type() != CellType::Original)
+        {
+            sortedPixels.erase(it);
+        }
+    }
+}
+
+sf::Color typeToColor(CellType type)
+{
+    switch (type) {
+    case Original:
+        return sf::Color::Red;
+    case New:
+        return sf::Color::Green;
+    case Inter2:
+    case Inter4:
+        return sf::Color::Blue;
+    }
 }
 
 template <typename T>
 void TOS<T>::drawParents(sf::RenderWindow &window, const sf::Vector2f &pos)
 {
-	if (pos.x > 0 && pos.x < m_image.width() && pos.y > 0 && pos.y < m_image.height())
-	{
-		std::vector<sf::Vertex> vertices;
-		SVMCell<T> *cell = m_image(static_cast<std::size_t>(pos.x), static_cast<std::size_t>(pos.y));
-        vertices.push_back(sf::Vertex(sf::Vector2f(cell->posX()+0.5f, cell->posY()+0.5f), sf::Color::Red));
-		SVMCell<T> *current = cell->parent();
-		while (current->parent() != current)
-		{
-            if(current->type() == CellType::New || current->type() == CellType::Original)
-            {
-                vertices.push_back(sf::Vertex(sf::Vector2f(current->posX()+0.5f, current->posY()+0.5f), sf::Color::Green));
-            }
-            else
-            {
-                vertices.push_back(sf::Vertex(sf::Vector2f(current->posX()+0.5f, current->posY()+0.5f), sf::Color::Blue));
-            }
+    if (pos.x > 0 && pos.x < m_image.width() && pos.y > 0 && pos.y < m_image.height())
+    {
+        std::vector<sf::Vertex> path;
+        sf::Vertex square[5];
 
-			current = current->parent();
-		}
-        window.draw(vertices.data(), vertices.size(), sf::LinesStrip);
-	}
+        SVMCell<T> *cell = m_image(static_cast<std::size_t>(pos.x), static_cast<std::size_t>(pos.y));
+        //std::cout << cell->posX() << " " << cell->posX() << std::endl;
+        SVMCell<T> *current = cell;
+
+        do{
+            path.push_back(sf::Vertex(sf::Vector2f(current->posX()+0.5f, current->posY()+0.5f), typeToColor(current->type())));
+            current = current->parent();
+        }while (current->parent() != current);
+
+        sf::Color col = typeToColor(cell->type());
+        square[0] = sf::Vertex(sf::Vector2f(cell->posX(), cell->posY()), col);
+        square[1] = sf::Vertex(sf::Vector2f(cell->posX()+1, cell->posY()), col);
+        square[2] = sf::Vertex(sf::Vector2f(cell->posX()+1, cell->posY()+1), col);
+        square[3] = sf::Vertex(sf::Vector2f(cell->posX(), cell->posY()+1), col);
+        square[4] = square[0];
+
+        window.draw(path.data(), path.size(), sf::LinesStrip);
+        window.draw(square, 5, sf::LinesStrip);
+    }
 }
