@@ -45,9 +45,7 @@ int main(int argc, char *argv[])
 
     TOS<LibTIM::U8> tree(svm_img);
 
-    svm_img.uninterpolate();
-
-
+    //svm_img.uninterpolate(&tree);
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
@@ -62,7 +60,6 @@ int main(int argc, char *argv[])
     sf::View view(window.getView());
 
     // Needed to render the SVMImage on the screen (as a texture on a sprite)
-    std::cout << "e_img.size() = " << svm_img.height() * svm_img.width() << " | " << svm_img.data().size() << std::endl;
     ImgHandler<LibTIM::U8> handler(svm_img);
 
     // Variables needed to compute mouse position changes (panning)
