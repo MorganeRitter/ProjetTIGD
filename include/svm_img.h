@@ -6,6 +6,9 @@
 #include <SFML/Graphics/Image.hpp>
 #include <vector>
 
+template <typename T>
+class TOS;
+
 // A SVMImage represent a Set Value Map image and is composed of SVMCell.
 template <typename T>
 class SVMImage
@@ -24,7 +27,7 @@ public:
 
     // getter for a pixel @ pos [i,j]
     SVMCell<T> *operator()(std::size_t i, std::size_t j);
-    void uninterpolate();
+    void uninterpolate(TOS<T> *tree);
 
 private:
     // add 1 pixel at the border of value median(Image)
