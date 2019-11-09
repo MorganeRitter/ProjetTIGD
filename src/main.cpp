@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     TOS<LibTIM::U8> tree(svm_img);
 
-    //svm_img.uninterpolate(&tree);
+    svm_img.uninterpolate(&tree);
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
