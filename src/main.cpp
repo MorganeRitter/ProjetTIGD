@@ -10,23 +10,10 @@
 
 void drawUI(sf::RenderWindow &window, const sf::View &view);
 
-sf::Font font;
-
-template <typename T>
-void displaySVMImage(SVMImage<T> &img);
-
 int main(int argc, char *argv[])
 {
     auto start = std::chrono::high_resolution_clock::now();
-    std::cout
-        << "SVMCell<float>:" << sizeof(SVMCell<float>)
-        << " | std::size_t:" << sizeof(std::size_t)
-        << " | CellType:" << sizeof(CellType)
-        << " | int:" << sizeof(int)
-        << " | float:" << sizeof(float)
-        << " | bool:" << sizeof(bool)
-        << " | SVMCell*:" << sizeof(SVMCell<float> *)
-        << std::endl;
+
     if (argc != 2)
     {
         std::cout << "Usage: " << argv[0] << " <image.pgm> \n";
@@ -36,7 +23,7 @@ int main(int argc, char *argv[])
     // Image est une classe générique paramétrée par le type des points contenus dans l'image
     LibTIM::Image<unsigned char> im;
     if (LibTIM::Image<LibTIM::U8>::load(argv[1], im))
-        std::cout << "Great, image is loaded\n";
+        std::cout << "PGM image is loaded\n";
     else
         return 1;
 
@@ -152,7 +139,6 @@ int main(int argc, char *argv[])
         window.clear(sf::Color(255, 255, 255));
         handler.draw(window);
         tree.drawParents(window, mousePos);
-        //tree.draw(window);
         drawUI(window, view);
 
         window.display();
@@ -163,14 +149,6 @@ int main(int argc, char *argv[])
 
 void drawUI(sf::RenderWindow &window, const sf::View &view)
 {
-    static bool initialized = false;
-    if (!initialized)
-    {
-        font.loadFromFile("fonts/NotoMono-Regular.ttf");
-        initialized = true;
-    }
-    float scale = view.getSize().x / static_cast<float>(window.getSize().x);
-    //std::cout << view.getSize().x << " " << view.getSize().y << " " << scale << std::endl;
     sf::Vertex X[] = {
         sf::Vertex(sf::Vector2f(-(view.getSize().x - view.getCenter().x), 0.f), sf::Color::Red),
         sf::Vertex(sf::Vector2f((view.getSize().x + view.getCenter().x), 0.f), sf::Color::Red)};
@@ -178,35 +156,6 @@ void drawUI(sf::RenderWindow &window, const sf::View &view)
         sf::Vertex(sf::Vector2f(0.f, (view.getSize().y + view.getCenter().y)), sf::Color::Green),
         sf::Vertex(sf::Vector2f(0.f, -(view.getSize().y - view.getCenter().y)), sf::Color::Green)};
 
-    /*int step = (scale + 50) / 100 * 100;
-    for (int i = 0; i < 10; i++)
-    {
-        sf::Text text;
-        text.setString(std::to_string(i * step));
-        text.setFont(font);
-        text.setCharacterSize(24);
-        text.setColor(sf::Color::White);
-        text.setScale({scale, scale});
-        text.setPosition({i * step, (-24 * scale) - scale * 2.0f});
-        window.draw(text);
-    }*/
-
     window.draw(X, 2, sf::Lines);
     window.draw(Y, 2, sf::Lines);
-}
-
-template <typename T>
-void displaySVMImage(SVMImage<T> &img)
-{
-    for (std::size_t i = 0; i < img.height(); i++)
-    {
-        for (std::size_t j = 0; j < img.width(); j++)
-        {
-            if (img(i, j)->type() == CellType::Original || img(i, j)->type() == CellType::New)
-                std::cout << static_cast<unsigned int>(img(i, j)->value()) << " ";
-            if (img(i, j)->type() == CellType::Inter2 || img(i, j)->type() == CellType::Inter4)
-                std::cout << static_cast<unsigned int>(img(i, j)->min()) << " ";
-        }
-        std::cout << std::endl;
-    }
 }
