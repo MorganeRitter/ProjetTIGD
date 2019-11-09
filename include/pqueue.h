@@ -6,6 +6,8 @@
 #include <ostream>
 #include <sstream>
 #include <vector>
+#include <map>
+
 template <typename T>
 class PQueue
 {
@@ -26,19 +28,14 @@ public:
     std::size_t size() const;
     // check if the PQueue is empty
     bool empty() const;
-    // check if a certain queue in a PQueue is empty
-    bool levelIsEmpty(std::size_t level) const;
 
-    /*debug:
-    Pqueue pq;
-    std:cout << pqueue << std::endl;
-    */
     friend std::ostream &operator<<(std::ostream &o, const PQueue &pq)
     {
         std::stringstream ss;
         ss << "{";
-        for (auto q : pq.m_pqueue)
+        for (auto qq : pq.m_pqueue)
         {
+            auto q = qq.second;
             ss << "[";
             for (int i = 0; i < q.size(); i++)
             {
@@ -63,7 +60,7 @@ private:
     // delete empty queues at the end of the vector container
     void clean();
 
-    std::vector<std::deque<SVMCell<T> *>> m_pqueue;
+    std::map<unsigned int, std::deque<SVMCell<T> *>> m_pqueue;
 };
 
 #include "pqueue.hpp"
