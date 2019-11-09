@@ -26,16 +26,16 @@ void ImgHandler<T>::feed()
     {
         for (int i = 0; i < m_svmImage.width(); i++) //x
         {
-            SVMCell<T> cell = m_svmImage.data().at(j * m_svmImage.width() + i);
-            if (cell.type() == CellType::Original || cell.type() == CellType::New)
+            SVMCell<T> *cell = m_svmImage.data().at(j * m_svmImage.width() + i);
+            if (cell->type() == CellType::Original || cell->type() == CellType::New)
             {
-                sf::Uint8 val = static_cast<sf::Uint8>(cell.value());
+                sf::Uint8 val = static_cast<sf::Uint8>(cell->value());
                 sf::Color col(val, val, val);
                 m_image.setPixel(i, j, col);
             }
             else
             {
-                sf::Uint8 val = static_cast<sf::Uint8>((cell.min() + cell.max()) / static_cast<T>(2));
+                sf::Uint8 val = static_cast<sf::Uint8>((cell->min() + cell->max()) / static_cast<T>(2));
                 sf::Color col(val, val, val);
                 m_image.setPixel(i, j, col);
             }

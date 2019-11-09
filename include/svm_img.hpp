@@ -37,7 +37,7 @@ void SVMImage<T>::extend()
     LibTIM::TSize newSizeX = m_original.getSizeX() + 2;
     LibTIM::TSize newSizeY = m_original.getSizeY() + 2;
 
-    std::vector<SVMCell<T>> e_img;
+    std::vector<SVMCell<T>*> e_img;
 
     for (LibTIM::TSize j = 0; j < newSizeY; ++j)
     {
@@ -45,13 +45,11 @@ void SVMImage<T>::extend()
         {
             if (i <= 0 || i >= newSizeX - 1 || j <= 0 || j >= newSizeY - 1)
             {
-                SVMCell<T> cell(CellType::Original, median);
-                e_img.push_back(cell);
+                e_img.push_back(new SVMCell<T>(CellType::Original, median));
             }
             else
             {
-                SVMCell<T> cell(CellType::Original, m_original(i - 1, j - 1));
-                e_img.push_back(cell);
+                e_img.push_back(new SVMCell<T>(CellType::Original, m_original(i - 1, j - 1)));
             }
         }
     }
@@ -73,7 +71,7 @@ void SVMImage<T>::interpolate()
     std::size_t nbLine = 2 * (m * 2 - 1) - 1;
     std::size_t size = (nbCol * nbLine) - 1;
     std::cout << nbCol << " " << nbLine << std::endl;
-    std::vector<SVMCell<T>> i_img(size + 1);
+    std::vector<SVMCell<T>*> i_img(size + 1);
 
     std::cout << "initialized" << std::endl;
     // fill old pixels
@@ -82,10 +80,10 @@ void SVMImage<T>::interpolate()
     {
         for (unsigned int c = 0; c < m_width; c++)
         {
-            SVMCell<T> cell(CellType::Original, m_image.at(l * m_width + c).value());
-            cell.posX(c*4);
-            cell.posY(l*4);
-            cell.visited(false);
+            SVMCell<T>* cell = new SVMCell<T>(CellType::Original, m_image.at(l * m_width + c)->value());
+            cell->posX(c*4);
+            cell->posY(l*4);
+            cell->visited(false);
             i_img.at((l * 4) * nbCol + (c * 4)) = cell;
         }
     }
@@ -102,21 +100,21 @@ void SVMImage<T>::interpolate()
             if (l % 4 == 2)
             {
                 // max of both neighboor original pixels on the same column
-                SVMCell<T> cell(CellType::New, std::max(i_img.at((l - 2) * nbCol + c).value(),
-                                                        i_img.at((l + 2) * nbCol + c).value()));
-                cell.posX(c);
-                cell.posY(l);
-                cell.visited(false);
+                SVMCell<T>* cell = new SVMCell<T>(CellType::New, std::max(i_img.at((l - 2) * nbCol + c)->value(),
+                                                                          i_img.at((l + 2) * nbCol + c)->value()));
+                cell->posX(c);
+                cell->posY(l);
+                cell->visited(false);
                 i_img.at(l * nbCol + c) = cell;
             }
             else if (l % 4 == 0)
             {
                 // max of neighboor original pixel on the same line
-                SVMCell<T> cell(CellType::New, std::max(i_img.at(l * nbCol + c - 2).value(),
-                                                        i_img.at(l * nbCol + c + 2).value()));
-                cell.posX(c);
-                cell.posY(l);
-                cell.visited(false);
+                SVMCell<T>* cell = new SVMCell<T>(CellType::New, std::max(i_img.at(l * nbCol + c - 2)->value(),
+                                                        i_img.at(l * nbCol + c + 2)->value()));
+                cell->posX(c);
+                cell->posY(l);
+                cell->visited(false);
                 i_img.at(l * nbCol + c) = cell;
             }
         }
@@ -129,12 +127,12 @@ void SVMImage<T>::interpolate()
     {
         for (unsigned int c = 2; c < nbCol; c += 4)
         {
-            T m = std::max(std::max(i_img.at((l - 2) * nbCol + c).value(), i_img.at((l + 2) * nbCol + c).value()),
-                           std::max(i_img.at(l * nbCol + c - 2).value(), i_img.at(l * nbCol + c + 2).value()));
-            SVMCell<T> cell(CellType::New, m);
-            cell.posX(c);
-            cell.posY(l);
-            cell.visited(false);
+            T m = std::max(std::max(i_img.at((l - 2) * nbCol + c)->value(), i_img.at((l + 2) * nbCol + c)->value()),
+                           std::max(i_img.at(l * nbCol + c - 2)->value(), i_img.at(l * nbCol + c + 2)->value()));
+            SVMCell<T>* cell = new SVMCell<T>(CellType::New, m);
+            cell->posX(c);
+            cell->posY(l);
+            cell->visited(false);
             i_img.at(l * nbCol + c) = cell;
         }
     }
@@ -153,8 +151,8 @@ void SVMImage<T>::interpolate()
             {
                 // max and min of both neighboor original or new pixels on the same column
                 T mi, ma;
-                T valU = i_img.at((l - 1) * nbCol + c).value();
-                T valD = i_img.at((l + 1) * nbCol + c).value();
+                T valU = i_img.at((l - 1) * nbCol + c)->value();
+                T valD = i_img.at((l + 1) * nbCol + c)->value();
                 if (valU < valD)
                 {
                     mi = valU;
@@ -165,10 +163,10 @@ void SVMImage<T>::interpolate()
                     mi = valD;
                     ma = valU;
                 }
-                SVMCell<T> cell(CellType::Inter2, mi, ma);
-                cell.posX(c);
-                cell.posY(l);
-                cell.visited(false);
+                SVMCell<T> *cell = new SVMCell<T>(CellType::Inter2, mi, ma);
+                cell->posX(c);
+                cell->posY(l);
+                cell->visited(false);
                 i_img.at(l * nbCol + c) = cell;
             }
             else if (l % 2 == 0)
@@ -176,8 +174,8 @@ void SVMImage<T>::interpolate()
                 // max and min of neighboor original or new pixel on the same line
                 std::size_t id = l * nbCol + c;
                 T mi, ma;
-                T valL = i_img.at(id - 1).value();
-                T valR = i_img.at(id + 1).value();
+                T valL = i_img.at(id - 1)->value();
+                T valR = i_img.at(id + 1)->value();
                 if (valL < valR)
                 {
                     mi = valL;
@@ -188,10 +186,10 @@ void SVMImage<T>::interpolate()
                     mi = valR;
                     ma = valL;
                 }
-                SVMCell<T> cell(CellType::Inter2, mi, ma);
-                cell.posX(c);
-                cell.posY(l);
-                cell.visited(false);
+                SVMCell<T> *cell = new SVMCell<T>(CellType::Inter2, mi, ma);
+                cell->posX(c);
+                cell->posY(l);
+                cell->visited(false);
                 i_img.at(l * nbCol + c) = cell;
             }
         }
@@ -204,10 +202,10 @@ void SVMImage<T>::interpolate()
         for (unsigned int c = 1; c < nbCol; c += 2)
         {
 
-            T values[] = {i_img.at((l - 1) * nbCol + c).value(),
-                          i_img.at((l + 1) * nbCol + c).value(),
-                          i_img.at(l * nbCol + c - 1).value(),
-                          i_img.at(l * nbCol + c + 1).value()};
+            T values[] = {i_img.at((l - 1) * nbCol + c)->value(),
+                          i_img.at((l + 1) * nbCol + c)->value(),
+                          i_img.at(l * nbCol + c - 1)->value(),
+                          i_img.at(l * nbCol + c + 1)->value()};
             T mi = values[0];
             T ma = mi;
             for (std::size_t i = 1; i < 4; i++)
@@ -221,10 +219,10 @@ void SVMImage<T>::interpolate()
                     ma = values[i];
                 }
             }
-            SVMCell<T> cell(CellType::Inter4, mi, ma);
-            cell.posX(c);
-            cell.posY(l);
-            cell.visited(false);
+            SVMCell<T> *cell = new SVMCell<T>(CellType::Inter4, mi, ma);
+            cell->posX(c);
+            cell->posY(l);
+            cell->visited(false);
             i_img.at(l * nbCol + c) = cell;
         }
     }
@@ -241,33 +239,22 @@ void SVMImage<T>::uninterpolate(TOS<T> *tree)
     tree->clean();
     std::cout << "tree is clean" << std::endl;
 
-
-    for(auto cell : m_image)
-    {
-        // if current is original, adjust position for uninterpolation
-        if(cell.type() == CellType::Original)
-        {
-            cell.posX(cell.posX()/4);
-            cell.posY(cell.posY()/4);
-        }
-        SVMCell<T> *current = &cell;
-        while(current != current->parent())
-        {
-            // if parent is not original
-            if(current->parent()->type() != CellType::Original)
-                current->parent(current->parent()->parent());
-            else // if it is original, move forward
-                current = current->parent();
-        }
-    }
-
     // remove all non-original cells
     for(auto it=m_image.begin() ; it != m_image.end() ;)
     {
-        if((*it).type() != CellType::Original)
+        if((*it)->type() != CellType::Original)
+        {
+            delete (*it);
             m_image.erase(it);
+        }
         else
             it++;
+    }
+
+    for(auto cell : m_image)
+    {
+        cell->posX(cell->posX()/4);
+        cell->posY(cell->posY()/4);
     }
 
     m_width = m_original.getSizeX()+2;
@@ -275,7 +262,7 @@ void SVMImage<T>::uninterpolate(TOS<T> *tree)
 }
 
 template <typename T>
-const std::vector<SVMCell<T>> &SVMImage<T>::data() const
+const std::vector<SVMCell<T>*> &SVMImage<T>::data() const
 {
     return m_image;
 }
@@ -283,11 +270,11 @@ const std::vector<SVMCell<T>> &SVMImage<T>::data() const
 template <typename T>
 SVMCell<T> *SVMImage<T>::operator()(std::size_t i, std::size_t j)
 {
-    return &(m_image.at(m_width * j + i));
+    return m_image.at(m_width * j + i);
 }
 
 template <typename T>
-SVMCell<T> &SVMImage<T>::get(int i, int j)
+SVMCell<T> *SVMImage<T>::get(int i, int j)
 {
     return m_image.at(m_width * j + i);
 }

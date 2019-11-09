@@ -16,9 +16,8 @@ class SVMImage
 public:
     SVMImage(const LibTIM::Image<T> &img);
 
-    std::vector<SVMCell<T> &> &getByType(CellType type);
     // read only public acces to image data
-    const std::vector<SVMCell<T>> &data() const;
+    const std::vector<SVMCell<T>*> &data() const;
 
     inline void width(std::size_t w);
     inline void height(std::size_t h);
@@ -38,13 +37,13 @@ private:
 
 
 
-    SVMCell<T> &get(int i, int j);
+    SVMCell<T> *get(int i, int j);
     void constructSVMImage();
 
 private:
     std::size_t m_height, m_width;
 
-    std::vector<SVMCell<T>> m_image;
+    std::vector<SVMCell<T>*> m_image;
     LibTIM::Image<T> m_original;
 };
 
