@@ -151,16 +151,14 @@ void TOS<T>::canonize()
 
         // q <- parent(p)
         SVMCell<T> *q = p->parent();
-        SVMCell<T> *prev = p;
 
         // if f(parent(q) == f(q)
         while (q->parent()->level() == q->level() && q->parent() != q) // See svm_cell.h
         {
-            prev = q;
             q = q->parent();
             if (q->parent() == q)
             {
-                p->parent(prev);
+                p->parent(q->parent());
             }
         }
 
@@ -174,17 +172,7 @@ void TOS<T>::canonize()
 template <typename T>
 void TOS<T>::clean()
 {
-    for (auto it = sortedPixels.begin(); it != sortedPixels.end();)
-    {
-        if ((*it)->type() != CellType::Original)
-        {
-            sortedPixels.erase(it);
-        }
-        else
-        {
-            it++;
-        }
-    }
+    sortedPixels.erase(std::remove_if(sortedPixels.begin(),sortedPixels.end(),[](SVMCell<T>*cell){return cell->type() != CellType::Original;}),sortedPixels.end());
 }
 
 sf::Color typeToColor(CellType type)
@@ -216,6 +204,13 @@ void TOS<T>::drawParents(sf::RenderWindow &window, const sf::Vector2f &pos)
         do
         {
             path.push_back(sf::Vertex(sf::Vector2f(current->posX() + 0.5f, current->posY() + 0.5f), typeToColor(current->type())));
+            sf::Color col = typeToColor(current->type());
+            square[0] = sf::Vertex(sf::Vector2f(current->posX(), current->posY()), col);
+            square[1] = sf::Vertex(sf::Vector2f(current->posX() + 1, current->posY()), col);
+            square[2] = sf::Vertex(sf::Vector2f(current->posX() + 1, current->posY() + 1), col);
+            square[3] = sf::Vertex(sf::Vector2f(current->posX(), current->posY() + 1), col);
+            square[4] = square[0];
+            window.draw(square, 5, sf::LinesStrip);
             current = current->parent();
         } while (current->parent() != current);
 
