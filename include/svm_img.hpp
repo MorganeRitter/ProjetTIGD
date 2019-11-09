@@ -240,16 +240,7 @@ void SVMImage<T>::uninterpolate(TOS<T> *tree)
     std::cout << "tree is clean" << std::endl;
 
     // remove all non-original cells
-    for(auto it=m_image.begin() ; it != m_image.end() ;)
-    {
-        if((*it)->type() != CellType::Original)
-        {
-            delete (*it);
-            m_image.erase(it);
-        }
-        else
-            it++;
-    }
+    m_image.erase(std::remove_if(m_image.begin(),m_image.end(),[](SVMCell<T>*cell){return cell->type() != CellType::Original;}),m_image.end());
 
     for(auto cell : m_image)
     {
