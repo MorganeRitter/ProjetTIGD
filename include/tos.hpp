@@ -131,30 +131,38 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 template <typename T>
 void TOS<T>::canonize()
 {
+    for(auto current : sortedPixels)
+    {
+        while(current != current->parent())
+        {
+            // if parent is not original
+            if(current->parent()->type() != CellType::Original)
+                current->parent(current->parent()->parent());
+            else // if it is original, move forward
+                current = current->parent();
+        }
+    }
+
     // for all p in [R in reverse order]
 #pragma omp parallel for
     for (long int i = sortedPixels.size() - 1; i >= 0; i--)
     {
-        //std::cout << i << std::endl;
         SVMCell<T> *p = sortedPixels[i];
+
+
 
         // q <- parent(p)
         SVMCell<T> *q = p->parent();
         SVMCell<T> *prev = p;
 
         // if f(parent(q) == f(q)
-
-
         while (q->parent()->level() == q->level() && q->parent() != q) // See svm_cell.h
         {
-            //std::cout << q->parent()->level() << " " << q->level() << " move" << std::endl;
             prev = q;
             q = q->parent();
             if(q->parent() == q)
             {
                 p->parent(prev);
-                //std::cout << "same" << std::endl;
-
             }
         }
 
