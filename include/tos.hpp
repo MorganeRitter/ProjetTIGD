@@ -78,7 +78,7 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 
     // get first level
     SVMCell<T> *borderFace = m_image(0, 0); // p_infinite
-    T borderValue = borderFace->value();	// l_infinite
+    T borderValue = borderFace->value();    // l_infinite
     std::size_t initialLevel = static_cast<std::size_t>(borderValue);
 
     std::size_t l = initialLevel;
@@ -131,12 +131,12 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 template <typename T>
 void TOS<T>::canonize()
 {
-    for(auto current : sortedPixels)
+    for (auto current : sortedPixels)
     {
-        while(current != current->parent())
+        while (current != current->parent())
         {
             // if parent is not original
-            if(current->parent()->type() != CellType::Original)
+            if (current->parent()->type() != CellType::Original)
                 current->parent(current->parent()->parent());
             else // if it is original, move forward
                 current = current->parent();
@@ -149,8 +149,6 @@ void TOS<T>::canonize()
     {
         SVMCell<T> *p = sortedPixels[i];
 
-
-
         // q <- parent(p)
         SVMCell<T> *q = p->parent();
         SVMCell<T> *prev = p;
@@ -160,13 +158,13 @@ void TOS<T>::canonize()
         {
             prev = q;
             q = q->parent();
-            if(q->parent() == q)
+            if (q->parent() == q)
             {
                 p->parent(prev);
             }
         }
 
-        if(q->parent()->level() != q->level())
+        if (q->parent()->level() != q->level())
         {
             p->parent(q->parent());
         }
@@ -176,18 +174,23 @@ void TOS<T>::canonize()
 template <typename T>
 void TOS<T>::clean()
 {
-    for(auto it = sortedPixels.begin() ; it != sortedPixels.end() ; ++ it)
+    for (auto it = sortedPixels.begin(); it != sortedPixels.end();)
     {
-        if((*it)->type() != CellType::Original)
+        if ((*it)->type() != CellType::Original)
         {
             sortedPixels.erase(it);
+        }
+        else
+        {
+            it++;
         }
     }
 }
 
 sf::Color typeToColor(CellType type)
 {
-    switch (type) {
+    switch (type)
+    {
     case Original:
         return sf::Color::Red;
     case New:
@@ -210,16 +213,17 @@ void TOS<T>::drawParents(sf::RenderWindow &window, const sf::Vector2f &pos)
         //std::cout << cell->posX() << " " << cell->posX() << std::endl;
         SVMCell<T> *current = cell;
 
-        do{
-            path.push_back(sf::Vertex(sf::Vector2f(current->posX()+0.5f, current->posY()+0.5f), typeToColor(current->type())));
+        do
+        {
+            path.push_back(sf::Vertex(sf::Vector2f(current->posX() + 0.5f, current->posY() + 0.5f), typeToColor(current->type())));
             current = current->parent();
-        }while (current->parent() != current);
+        } while (current->parent() != current);
 
         sf::Color col = typeToColor(cell->type());
         square[0] = sf::Vertex(sf::Vector2f(cell->posX(), cell->posY()), col);
-        square[1] = sf::Vertex(sf::Vector2f(cell->posX()+1, cell->posY()), col);
-        square[2] = sf::Vertex(sf::Vector2f(cell->posX()+1, cell->posY()+1), col);
-        square[3] = sf::Vertex(sf::Vector2f(cell->posX(), cell->posY()+1), col);
+        square[1] = sf::Vertex(sf::Vector2f(cell->posX() + 1, cell->posY()), col);
+        square[2] = sf::Vertex(sf::Vector2f(cell->posX() + 1, cell->posY() + 1), col);
+        square[3] = sf::Vertex(sf::Vector2f(cell->posX(), cell->posY() + 1), col);
         square[4] = square[0];
 
         window.draw(path.data(), path.size(), sf::LinesStrip);
