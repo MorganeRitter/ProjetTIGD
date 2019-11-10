@@ -152,20 +152,35 @@ void TOS<T>::canonize()
         // q <- parent(p)
         SVMCell<T> *q = p->parent();
 
-        // if f(parent(q) == f(q)
-        while (q->parent()->level() == q->level() && q->parent() != q) // See svm_cell.h
-        {
-            q = q->parent();
-            if (q->parent() == q)
-            {
-                p->parent(q->parent());
-            }
-        }
+		std::vector<SVMCell<T> *> q_save;
+		q_save.push_back(q);
 
-        if (q->parent()->level() != q->level())
-        {
-            p->parent(q->parent());
-        }
+		if(q->level() == p->level())
+		{
+			// if f(parent(q) == f(q)
+	        while (q->parent()->level() == q->level() && q->parent() != q) // See svm_cell.h
+	        {
+				q = q->parent();
+				q_save.push_back(q);
+	            if (q->parent() == q)
+	            {
+	                p->parent(q->parent());
+					for(auto current : q_save)
+					{
+						current->parent(q->parent());
+					}
+	            }
+	        }
+
+	        if (q->parent()->level() != q->level())
+	        {
+				p->parent(q->parent());
+				for(auto current : q_save)
+				{
+					current->parent(q->parent());
+				}
+			}
+		}
     }
 }
 
