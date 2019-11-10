@@ -131,19 +131,7 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 template <typename T>
 void TOS<T>::canonize()
 {
-    for (auto current : sortedPixels)
-    {
-        while (current != current->parent())
-        {
-            // if parent is not original
-            if (current->parent()->type() != CellType::Original)
-                current->parent(current->parent()->parent());
-            else // if it is original, move forward
-                current = current->parent();
-        }
-    }
-
-    // for all p in [R in reverse order]
+// for all p in [R in reverse order]
 #pragma omp parallel for
     for (long int i = sortedPixels.size() - 1; i >= 0; i--)
     {
@@ -153,6 +141,12 @@ void TOS<T>::canonize()
         SVMCell<T> *q = p->parent();
 
 		std::vector<SVMCell<T> *> q_save;
+
+		while(q->parent()->type() != CellType::Original)
+		{
+			q->parent(q->parent()->parent());
+		}
+
 		q_save.push_back(q);
 
 		if(q->level() == p->level())
@@ -164,22 +158,50 @@ void TOS<T>::canonize()
 				q_save.push_back(q);
 	            if (q->parent() == q)
 	            {
-	                p->parent(q->parent());
-					for(auto current : q_save)
-					{
-						current->parent(q->parent());
+					if(q->parent()->type() == CellType::Original)
+	                {
+						p->parent(q->parent());
+						for(auto current : q_save)
+						{
+							current->parent(q->parent());
+						}
+					} else {
+						while(q->parent()->type() != CellType::Original)
+						{
+							q->parent(q->parent()->parent());
+						}
+						p->parent(q->parent());
+						for(auto current : q_save)
+						{
+							current->parent(q->parent());
+						}
 					}
 	            }
 	        }
 
 	        if (q->parent()->level() != q->level())
 	        {
-				p->parent(q->parent());
-				for(auto current : q_save)
+				if(q->parent()->type() == CellType::Original)
 				{
-					current->parent(q->parent());
+					p->parent(q->parent());
+					for(auto current : q_save)
+					{
+						current->parent(q->parent());
+					}
+				} else {
+					while(q->parent()->type() != CellType::Original)
+					{
+						q->parent(q->parent()->parent());
+					}
+					p->parent(q->parent());
+					for(auto current : q_save)
+					{
+						current->parent(q->parent());
+					}
 				}
 			}
+		} else {
+			p->parent(q->parent());
 		}
     }
 }
