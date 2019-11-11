@@ -14,7 +14,6 @@ TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 template <typename T>
 void TOS<T>::unionFind()
 {
-    //std::cout << "Taille" << m_image.width() << " " << m_image.height() << '\n';
     for (int i = sortedPixels.size() - 1; i >= 0; i--)
     {
         SVMCell<T> *currentP = sortedPixels[i];
@@ -134,56 +133,57 @@ void TOS<T>::canonize()
     // for all p in [R in reverse order]
     for (long int i = sortedPixels.size() - 1; i >= 0; i--)
     {
-        //pixel dont on cherche le parent canonique
+        // the pixel for which we are looking for a canonical parent
         SVMCell<T> *p = sortedPixels[i];
 
         // q <- parent(p)
         SVMCell<T> *q = p->parent();
 
-        //on verife si le pixel parent est de type Original
-        //Si c'est pas le cas -> on remonte ces parents
-        //jusqu'à un pixel de type Original
+        // we check that the parent pixel is of Original type
+        // if it is not the case -> we go through its parents
+        // until we get to a pixel of Original type
         while (q->parent()->type() != CellType::Original)
         {
             q->parent(q->parent()->parent());
         }
 
-        //on verifie si le pixel et le pixel parent appartiennent a la meme forme
+        // we check that the pixel and its parent belong to the same shape
         if (q->level() == p->level())
         {
-            //on sauvegarde le chemin parcouru pour trouvez le pixel canonique
+            // we save the path we made to find the canonical pixel
             std::vector<SVMCell<T> *> qSave;
             qSave.push_back(q);
 
-            //si le pixel et le pixel parent sont dans la meme forme
-            //et si le pixel et le pixel parent ne sont pas un seul et meme pixel
+            // if the pixel and its parent are in the same shape
+            // and if the pixel and its parent aren't the SAME pixel
             while (q->parent()->level() == q->level() && q->parent() != q) // See svm_cell.h
             {
-                //on remonte le chemin de parents
+                // we continue through its parents
                 q = q->parent();
                 qSave.push_back(q);
             }
 
-            //si le pixel et le pixel parent sont un seul et meme pixel
+            // if the pixel and its parent are the same pixel
             if (q->parent() == q)
             {
-                //si il est de type original on peut le prendre comme parent
+                // if it is of Original type, we can consider
+                // it is the parent we were looking for
                 if (q->parent()->type() == CellType::Original)
                 {
-                    //on affecte au pixel courant
+                    // it is now the parent of the current pixel
                     p->parent(q->parent());
 #pragma omp parallel for
-                    //et au pixels parcourus
+                    // and the parent of the pixels we went through
                     for (unsigned int j = 0; j < qSave.size(); j++)
                     {
                         qSave[j]->parent(q->parent());
                     }
                 }
-                //sinon le pixel et le pixel parent ne sont plus dans la meme forme
+                // otherwise, the pixel and its parent are not in the same shape anymore
             }
             else if (q->parent()->level() != q->level())
             {
-                //si le pixel est de type Original
+                // if the pixel is of Original type
                 if (q->parent()->type() == CellType::Original)
                 {
                     p->parent(q->parent());
@@ -195,9 +195,9 @@ void TOS<T>::canonize()
                 }
                 else
                 {
-                    //sinon on remonte le chemin de parent
-                    //jusqu'a un pixel de type Original
-                    //et on prends celui ci comme parent
+                    // otherwise we go through its parents
+                    // until we get to an Original pixel
+                    // and we take this one as a parent
                     while (q->parent()->type() != CellType::Original)
                     {
                         q->parent(q->parent()->parent());
@@ -210,8 +210,8 @@ void TOS<T>::canonize()
                     }
                 }
             }
-            //sinon le pixel et le pixel parent ne sont plus dans la meme forme
-            //on affecte simplement le parent
+            // otherwise the pixel and its parent are not in the same shape anymore
+            // we simply set the parent
         }
         else
         {
@@ -235,7 +235,6 @@ void TOS<T>::drawParents(sf::RenderWindow &window, const sf::Vector2f &pos)
         sf::Vertex square[5];
 
         SVMCell<T> *cell = m_image(static_cast<std::size_t>(pos.x), static_cast<std::size_t>(pos.y));
-        //std::cout << cell->posX() << " " << cell->posX() << std::endl;
         SVMCell<T> *current = cell;
 
         do

@@ -115,8 +115,7 @@ void SVMImage<T>::interpolate()
         }
     }
 
-    // fill the remaining values
-    // ordre de parcours arbitraire
+    // fill the remaining values (arbitrary order)
 #pragma omp parallel for
     for (unsigned int l = 2; l < nbLine; l += 4)
     {
@@ -134,12 +133,9 @@ void SVMImage<T>::interpolate()
     VERBOSE("New pixels\n")
 
     // fill the interpixels
-
 #pragma omp parallel for
     for (std::size_t l = 0; l < nbLine; l++)
     {
-        //std::cout << omp_get_num_threads() << std::endl;
-
         for (std::size_t c = (l + 1) % 2; c < nbCol; c += 2)
         {
             if (l % 2 == 1)
@@ -190,7 +186,7 @@ void SVMImage<T>::interpolate()
         }
     }
 
-    // parcours arbitraire
+    // arbitrary order
 #pragma omp parallel for
     for (unsigned int l = 1; l < nbLine; l += 2)
     {
