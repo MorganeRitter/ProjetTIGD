@@ -7,7 +7,7 @@ RELEASE_PATH = $(BUILD_PATH)/release
 DEBUG_PATH = $(BUILD_PATH)/debug
 
 # executable # 
-BIN_NAME = tos.out
+BIN_NAME = tos
 
 # extensions #
 SRC_EXT = cpp
