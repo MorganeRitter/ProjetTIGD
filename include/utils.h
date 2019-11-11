@@ -18,7 +18,8 @@ static bool verbose = false;
     if (verbose)          \
     {                     \
         std::cout << str; \
-    }
+    }                     \
+    std::cout.flush();
 
 sf::Color typeToColor(CellType type)
 {
