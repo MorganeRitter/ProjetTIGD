@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    // Image est une classe générique paramétrée par le type des points contenus dans l'image
+    // Image is a generic class templated by the image points' type
     LibTIM::Image<unsigned char> im;
     if (LibTIM::Image<LibTIM::U8>::load(argv[file_arg_pos], im))
     {

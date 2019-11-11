@@ -24,7 +24,6 @@ SVMCell<T> *PQueue<T>::pop(std::size_t level)
     // delete the front element
     m_pqueue.at(level).pop_front();
 
-    clean();
     return cell;
 }
 
@@ -94,15 +93,4 @@ bool PQueue<T>::empty() const
         }
     }
     return true;
-}
-
-template <typename T>
-void PQueue<T>::clean()
-{
-    /*int i = m_pqueue.size() - 1;
-    while (i >= 0 && m_pqueue.at(i).empty())
-    {
-        m_pqueue.pop_back();
-        i--;
-    }*/
 }

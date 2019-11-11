@@ -57,9 +57,6 @@ public:
     }
 
 private:
-    // delete empty queues at the end of the vector container
-    void clean();
-
     std::map<unsigned int, std::deque<SVMCell<T> *>> m_pqueue;
 };
 
