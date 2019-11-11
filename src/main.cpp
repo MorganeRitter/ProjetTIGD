@@ -7,22 +7,93 @@
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <iostream>
+#include <getopt.h>
 
 void drawUI(sf::RenderWindow &window, const sf::View &view);
 
+void help()
+{
+    std::cout << "\nUsage:\n" <<
+                 " tos [options] infile [options]\n\n" <<
+                 "Compute infile's tree of shape.\n\n"
+                 "Options\n" <<
+                 " -n, --no-uninterpolation Deactivate the uninterpolation step\n" <<
+                 " -f, --file <infile>      The file to process, ignore non-option infile\n\n" <<
+                 " -h, --help               Display this help\n" <<
+                 " -V, --version            Display version\n" << std::endl;
+}
+
 int main(int argc, char *argv[])
 {
-    auto start = std::chrono::high_resolution_clock::now();
+    bool file_provided = false;
+    bool uninterpolate = true;
+    int file_arg_pos = 1;
 
-    if (argc != 2)
+    static struct option long_options[] = {
+    {"no-uninterpolation", no_argument, nullptr, 'n'},
+    {"file", required_argument, nullptr, 'f'},
+    {"help", no_argument, nullptr, 'h'},
+    {"version", no_argument, nullptr, 'V'},
+    {nullptr, 0, nullptr, 0}
+};
+
+    int c;
+
+    if(argc == 1)
     {
-        std::cout << "Usage: " << argv[0] << " <image.pgm> \n";
-        exit(1);
+        help();
+        exit(EXIT_FAILURE);
     }
+
+    while ((c = getopt_long(argc, argv, "nf:hV", long_options, nullptr)) != -1)
+    {
+        // Option argument
+        switch (c)
+        {
+        case 'n': // No uninterpolation
+            uninterpolate = false;
+            break;
+        case 'h': // display help
+            help();
+            exit(EXIT_SUCCESS);
+        case 'V': // display version
+            std::cout << "tos, Tree of Shape, by Méline Bourg-Lang, Morgane Ritter & Nathan Roth" << std::endl;
+            exit(EXIT_SUCCESS);
+        case 'f':
+            file_provided = true;
+            file_arg_pos = optind-1;
+            break;
+        default:
+            help();
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    if(optind == argc-1 && file_provided == false)
+    {
+        file_provided = true;
+        file_arg_pos = optind;
+    }
+    else
+    {
+        help();
+        exit(EXIT_FAILURE);
+    }
+
+    if(!file_provided)
+    {
+        std::cout << "PGM image is missing" << std::endl;
+        help();
+        exit(EXIT_FAILURE);
+    }
+    std::cout << argv[file_arg_pos] << std::endl;
+
+
+    auto start = std::chrono::high_resolution_clock::now();
 
     // Image est une classe générique paramétrée par le type des points contenus dans l'image
     LibTIM::Image<unsigned char> im;
-    if (LibTIM::Image<LibTIM::U8>::load(argv[1], im))
+    if (LibTIM::Image<LibTIM::U8>::load(argv[file_arg_pos], im))
         std::cout << "PGM image is loaded\n";
     else
         return 1;
@@ -32,7 +103,8 @@ int main(int argc, char *argv[])
 
     TOS<LibTIM::U8> tree(svm_img);
 
-    svm_img.uninterpolate(&tree);
+    if(uninterpolate)
+        svm_img.uninterpolate(&tree);
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
