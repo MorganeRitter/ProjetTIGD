@@ -32,7 +32,7 @@ INCLUDES = -I include/ -I /usr/local/include -I/usr/include -I libtim/
 LIBS = -lsfml-graphics -lsfml-window -lsfml-system -fopenmp
 
 .PHONY: default_target
-default_target: debug
+default_target: release
 
 .PHONY: release
 release: export CXXFLAGS := $(CXXFLAGS) $(COMPILE_FLAGS) $(RELEASE_FLAGS)
