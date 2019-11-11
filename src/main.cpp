@@ -13,10 +13,12 @@ void drawUI(sf::RenderWindow &window, const sf::View &view);
 
 void help()
 {
-    std::cout << "\nUsage:\n"
+    std::cout << BOLD_ON << "\nUsage:\n"
+              << RESET
               << " tos [options] infile [options]\n\n"
               << "Compute infile's tree of shape.\n\n"
-                 "Options\n"
+              << BOLD_ON << "Options\n"
+              << RESET
               << " -n, --no-uninterpolation Deactivate the uninterpolation step\n"
               << " -f, --file <infile>      The file to process, ignore non-option infile\n"
               << " -v, --verbose            Display step description output\n"
@@ -111,13 +113,21 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
+    VERBOSE(BLUE << "Creating SVM Object.\n")
     SVMImage<LibTIM::U8> svm_img(im);
-    VERBOSE("SVM object created\n")
+    VERBOSE(GREEN << "SVM object created\n"
+                  << RESET)
 
+    VERBOSE(BLUE << "Creating tree of shape.\n")
     TOS<LibTIM::U8> tree(svm_img);
+    VERBOSE(GREEN << "Tree created\n"
+                  << RESET)
 
+    VERBOSE(YELLOW << "Image uninterpolation... ")
     if (uninterpolate)
         svm_img.uninterpolate(&tree);
+    VERBOSE(GREEN << "done.\n"
+                  << RESET)
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
@@ -134,7 +144,9 @@ int main(int argc, char *argv[])
         sf::View view(window.getView());
 
         // Needed to render the SVMImage on the screen (as a texture on a sprite)
+        VERBOSE(BLUE << "Image handler... ")
         ImgHandler<LibTIM::U8> handler(svm_img);
+        VERBOSE(GREEN << "initialized.\n")
 
         // Variables needed to compute mouse position changes (panning)
         sf::Vector2f newPos, oldPos;

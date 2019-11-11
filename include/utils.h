@@ -6,6 +6,14 @@
 
 static bool verbose = false;
 
+#define BLUE "\033[34m"
+#define YELLOW "\033[33m"
+#define GREEN "\033[32m"
+#define RED "\033[31m"
+#define RESET "\033[0m"
+#define BOLD_ON "\033[1m"
+#define BOLD_OFF "\033[21m"
+
 #define VERBOSE(str)      \
     if (verbose)          \
     {                     \

@@ -4,13 +4,9 @@ template <typename T>
 ImgHandler<T>::ImgHandler(SVMImage<T> &img) : m_svmImage(img)
 {
     m_image.create(m_svmImage.width(), m_svmImage.height());
-    VERBOSE("image allocated: (" << m_image.getSize().x << ", " << m_image.getSize().y << ")\n")
     feed();
-    VERBOSE("image fed\n")
     m_texture.loadFromImage(m_image);
-    VERBOSE("texture created\n")
     m_sprite.setTexture(m_texture);
-    VERBOSE("texture set\n")
 }
 
 template <typename T>

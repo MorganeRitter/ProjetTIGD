@@ -3,12 +3,17 @@
 template <typename T>
 TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 {
+    VERBOSE(YELLOW << " - Sort pixels... ")
     sortedPixels = sort();
-    VERBOSE("sort\n")
+    VERBOSE(GREEN << "done\n")
+
+    VERBOSE(YELLOW << " - Union find algorithm... ")
     unionFind();
-    VERBOSE("union find\n")
+    VERBOSE(GREEN << "done.\n")
+
+    VERBOSE(YELLOW << " - Canonize tree... ")
     canonize();
-    VERBOSE("canonize")
+    VERBOSE(GREEN << "done.\n")
 }
 
 template <typename T>
