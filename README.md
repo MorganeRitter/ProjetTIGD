@@ -14,9 +14,11 @@ Pour l'installer :
 
 ## Utilisation
 
-Pour lancer le programme : `make clean && make && ./tos <filename.pgm> --display`.
+- Compiler: `make`
+- Nettoyer: `make clean`
+- Lancer: `./tos <filename.pgm> --display`
 
-Voici le détail des options disponibles :
+Détail des options disponibles :
 
 - `-n, --no-unterpolation` : permet de voir l'image non désinterpolée : l'arbre des formes inclut ainsi tous les pixels et *interpixels* ajoutés pour traiter l'image.
 - `-f, --file` : permet d'indiquer le fichier d'entrée (il est possible de le faire sans l'option, *cf* la commande précédente)
@@ -27,7 +29,7 @@ Voici le détail des options disponibles :
 
 ## Interface
 
-Une fois que l'exécution termine, si l'option `--display` a bien été indiquée, l'interface graphique s'affiche. Voici comment interagir avec celle-ci :
+Une fois que l'exécution termine, si l'option `--display` a bien été indiquée, l'interface graphique s'affiche. Pour interagir avec celle-ci :
 
 - Cliquer-glisser : déplacement dans l'interface
 - Faire défiler : zoomer, dézoomer
