@@ -132,74 +132,84 @@ template <typename T>
 void TOS<T>::canonize()
 {
 // for all p in [R in reverse order]
-#pragma omp parallel for
     for (long int i = sortedPixels.size() - 1; i >= 0; i--)
     {
+		//pixel dont on cherche le parent canonique
         SVMCell<T> *p = sortedPixels[i];
 
         // q <- parent(p)
         SVMCell<T> *q = p->parent();
 
-		std::vector<SVMCell<T> *> q_save;
-
+		//on verife si le pixel parent est de type Original
+		//Si c'est pas le cas -> on remonte ces parents
+		//jusqu'à un pixel de type Original
 		while(q->parent()->type() != CellType::Original)
 		{
 			q->parent(q->parent()->parent());
 		}
 
-		q_save.push_back(q);
 
+		//on verifie si le pixel et le pixel parent appartiennent a la meme forme
 		if(q->level() == p->level())
 		{
-			// if f(parent(q) == f(q)
+			//on sauvegarde le chemin parcouru pour trouvez le pixel canonique
+			std::vector<SVMCell<T> *> qSave;
+			qSave.push_back(q);
+
+			//si le pixel et le pixel parent sont dans la meme forme
+			//et si le pixel et le pixel parent ne sont pas un seul et meme pixel
 	        while (q->parent()->level() == q->level() && q->parent() != q) // See svm_cell.h
 	        {
+				//on remonte le chemin de parents
 				q = q->parent();
-				q_save.push_back(q);
-	            if (q->parent() == q)
-	            {
-					if(q->parent()->type() == CellType::Original)
-	                {
-						p->parent(q->parent());
-						for(auto current : q_save)
-						{
-							current->parent(q->parent());
-						}
-					} else {
-						while(q->parent()->type() != CellType::Original)
-						{
-							q->parent(q->parent()->parent());
-						}
-						p->parent(q->parent());
-						for(auto current : q_save)
-						{
-							current->parent(q->parent());
-						}
-					}
-	            }
+				qSave.push_back(q);
 	        }
 
-	        if (q->parent()->level() != q->level())
+			//si le pixel et le pixel parent sont un seul et meme pixel
+			if (q->parent() == q)
+			{
+				//si il est de type original on peut le prendre comme parent
+				if(q->parent()->type() == CellType::Original)
+				{
+					//on affecte au pixel courant
+					p->parent(q->parent());
+					#pragma omp parallel for
+					//et au pixels parcourus
+					for(unsigned int j=0; j < qSave.size(); j++)
+					{
+						qSave[j]->parent(q->parent());
+					}
+				}
+			//sinon le pixel et le pixel parent ne sont plus dans la meme forme
+			} else if (q->parent()->level() != q->level())
 	        {
+				//si le pixel est de type Original
 				if(q->parent()->type() == CellType::Original)
 				{
 					p->parent(q->parent());
-					for(auto current : q_save)
+					#pragma omp parallel for
+					for(unsigned int j=0; j < qSave.size(); j++)
 					{
-						current->parent(q->parent());
+						qSave[j]->parent(q->parent());
 					}
 				} else {
+					//sinon on remonte le chemin de parent
+					//jusqu'a un pixel de type Original
+					//et on prends celui ci comme parent
 					while(q->parent()->type() != CellType::Original)
 					{
 						q->parent(q->parent()->parent());
 					}
 					p->parent(q->parent());
-					for(auto current : q_save)
+					#pragma omp parallel for
+					for(unsigned int j=0; j < qSave.size(); j++)
 					{
-						current->parent(q->parent());
+						qSave[j]->parent(q->parent());
 					}
 				}
 			}
+		//sinon le pixel et le pixel parent ne sont plus dans la meme forme
+		//on affecte simplement le parent
 		} else {
 			p->parent(q->parent());
 		}
