@@ -8,7 +8,9 @@ Ce projet calcule l'arbre des formes d'une image 2D en temps linéaire, et se ba
 
 ## Installation
 
-Une dépendance est requise pour exécuter le programme : la librairie SFML permet un affichage interactif de la parenté des pixels. Voici la commande requise pour l'installer : `sudo apt-get install libsfml-dev`.
+Une dépendance est requise pour exécuter le programme : la librairie SFML, qui permet un affichage interactif de l'arbre des formes.
+Pour l'installer :
+```sudo apt install libsfml-dev```.
 
 ## Utilisation
 
