@@ -16,12 +16,12 @@ Pour lancer le programme : `make clean && make && ./tos <filename.pgm> --display
 
 Voici le détail des options disponibles :
 
-- `--no-unterpolation` : permet de voir l'image non désinterpolée : l'arbre des formes inclut ainsi tous les pixels et *interpixels* ajoutés pour traiter l'image.
-- `--file` : permet d'indiquer le fichier d'entrée (il est possible de le faire sans l'option, *cf* la commande précédente)
-- `--display` : affiche l'interface graphique. Il peut être intéressant de la désactiver pour faire des tests de performance.
-- `--help` : liste le détail des options.
-- `--verbose`
-- `--version`
+- `-n, --no-unterpolation` : permet de voir l'image non désinterpolée : l'arbre des formes inclut ainsi tous les pixels et *interpixels* ajoutés pour traiter l'image.
+- `-f, --file` : permet d'indiquer le fichier d'entrée (il est possible de le faire sans l'option, *cf* la commande précédente)
+- `-d, --display` : affiche l'interface graphique. Il peut être intéressant de la désactiver pour faire des tests de performance.
+- `-h, --help` : liste le détail des options.
+- `-v, --verbose`
+- `-V, --version`
 
 ## Interface
 
@@ -30,7 +30,7 @@ Une fois que l'exécution termine, si l'option `--display` a bien été indiqué
 - Cliquer-glisser : déplacement dans l'interface
 - Faire défiler : zoomer, dézoomer
 
-Au passage de la souris sur un pixel, un tracé va s'afficher. Les pixels encadrés correspondent aux parents du pixel courant, selon l'arbre des formes.
+Au passage de la souris sur un pixel, un tracé va s'afficher. Les pixels encadrés correspondent aux parents du pixel sous la souris, selon l'arbre des formes.
 Ils sont reliés entre eux afin de définir un chemin de parenté.
 
 Les couleurs permettent de définir le type des pixels. Cette distinction est utile dans le cas où l'on indique l'option `--no-unterpolation`. Voici la correspondance entre les couleurs et les types de pixels : si le pixel est encadré
