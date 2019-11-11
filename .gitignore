@@ -2,5 +2,6 @@ libtim/doc
 libtim/Examples
 .vscode
 *.out
+tos
 bin
 TOS.*
