@@ -6,24 +6,24 @@
 #include <Common/Image.h>
 #include <SFML/Graphics.hpp>
 #include <chrono>
-#include <iostream>
 #include <getopt.h>
-
+#include <iostream>
 
 void drawUI(sf::RenderWindow &window, const sf::View &view);
 
 void help()
 {
-    std::cout << "\nUsage:\n" <<
-                 " tos [options] infile [options]\n\n" <<
-                 "Compute infile's tree of shape.\n\n"
-                 "Options\n" <<
-                 " -n, --no-uninterpolation Deactivate the uninterpolation step\n" <<
-                 " -f, --file <infile>      The file to process, ignore non-option infile\n" <<
-                 " -v, --verbose            Display step description output\n" <<
-                 " -d, --display            Open the graphical interface\n\n" <<
-                 " -h, --help               Display this help\n" <<
-                 " -V, --version            Display version\n" << std::endl;
+    std::cout << "\nUsage:\n"
+              << " tos [options] infile [options]\n\n"
+              << "Compute infile's tree of shape.\n\n"
+                 "Options\n"
+              << " -n, --no-uninterpolation Deactivate the uninterpolation step\n"
+              << " -f, --file <infile>      The file to process, ignore non-option infile\n"
+              << " -v, --verbose            Display step description output\n"
+              << " -d, --display            Open the graphical interface\n\n"
+              << " -h, --help               Display this help\n"
+              << " -V, --version            Display version\n"
+              << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -34,18 +34,17 @@ int main(int argc, char *argv[])
     int file_arg_pos = 1;
 
     static struct option long_options[] = {
-    {"no-uninterpolation", no_argument, nullptr, 'n'},
-    {"file", required_argument, nullptr, 'f'},
-    {"verbose", no_argument, nullptr, 'v'},
-    {"display", no_argument, nullptr, 'd'},
-    {"help", no_argument, nullptr, 'h'},
-    {"version", no_argument, nullptr, 'V'},
-    {nullptr, 0, nullptr, 0}
-};
+        {"no-uninterpolation", no_argument, nullptr, 'n'},
+        {"file", required_argument, nullptr, 'f'},
+        {"verbose", no_argument, nullptr, 'v'},
+        {"display", no_argument, nullptr, 'd'},
+        {"help", no_argument, nullptr, 'h'},
+        {"version", no_argument, nullptr, 'V'},
+        {nullptr, 0, nullptr, 0}};
 
     int c;
 
-    if(argc == 1)
+    if (argc == 1)
     {
         help();
         exit(EXIT_FAILURE);
@@ -73,7 +72,7 @@ int main(int argc, char *argv[])
             exit(EXIT_SUCCESS);
         case 'f':
             file_provided = true;
-            file_arg_pos = optind-1;
+            file_arg_pos = optind - 1;
             break;
         default:
             help();
@@ -81,7 +80,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(optind == argc-1 && file_provided == false)
+    if (optind == argc - 1 && file_provided == false)
     {
         file_provided = true;
         file_arg_pos = optind;
@@ -92,7 +91,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    if(!file_provided)
+    if (!file_provided)
     {
         std::cout << "PGM image is missing" << std::endl;
         help();
@@ -115,16 +114,16 @@ int main(int argc, char *argv[])
     SVMImage<LibTIM::U8> svm_img(im);
     VERBOSE("SVM object created\n")
 
-            TOS<LibTIM::U8> tree(svm_img);
+    TOS<LibTIM::U8> tree(svm_img);
 
-    if(uninterpolate)
+    if (uninterpolate)
         svm_img.uninterpolate(&tree);
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
     std::cout << "Tree computation executed in " << duration << " milliseconds" << std::endl;
 
-    if(display)
+    if (display)
     {
         sf::ContextSettings settings;
         settings.antialiasingLevel = 8;

@@ -17,7 +17,7 @@ public:
     SVMImage(const LibTIM::Image<T> &img);
 
     // read only public acces to image data
-    const std::vector<SVMCell<T>*> &data() const;
+    const std::vector<SVMCell<T> *> &data() const;
 
     inline void width(std::size_t w);
     inline void height(std::size_t h);
@@ -35,15 +35,10 @@ private:
     // interpolate the image
     void interpolate();
 
-
-
-    SVMCell<T> *get(int i, int j);
-    void constructSVMImage();
-
 private:
     std::size_t m_height, m_width;
 
-    std::vector<SVMCell<T>*> m_image;
+    std::vector<SVMCell<T> *> m_image;
     LibTIM::Image<T> m_original;
 };
 

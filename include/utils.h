@@ -1,15 +1,29 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include "svm_cell.h"
+#include <SFML/Graphics.hpp>
+
 static bool verbose = false;
 
-#define VERBOSE(str) if(verbose) {std::cout << str ;}
+#define VERBOSE(str)      \
+    if (verbose)          \
+    {                     \
+        std::cout << str; \
+    }
 
-template<class T>
-const T& clamp( const T& v, const T& lo, const T& hi )
+sf::Color typeToColor(CellType type)
 {
-    assert( !(hi < lo) );
-    return (v < lo) ? lo : (hi < v) ? hi : v;
+    switch (type)
+    {
+    case Original:
+        return sf::Color::Red;
+    case New:
+        return sf::Color::Green;
+    case Inter2:
+    case Inter4:
+        return sf::Color::Blue;
+    }
 }
 
 #endif // UTILS_H

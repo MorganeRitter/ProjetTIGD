@@ -131,109 +131,99 @@ std::vector<SVMCell<T> *> TOS<T>::sort()
 template <typename T>
 void TOS<T>::canonize()
 {
-// for all p in [R in reverse order]
+    // for all p in [R in reverse order]
     for (long int i = sortedPixels.size() - 1; i >= 0; i--)
     {
-		//pixel dont on cherche le parent canonique
+        //pixel dont on cherche le parent canonique
         SVMCell<T> *p = sortedPixels[i];
 
         // q <- parent(p)
         SVMCell<T> *q = p->parent();
 
-		//on verife si le pixel parent est de type Original
-		//Si c'est pas le cas -> on remonte ces parents
-		//jusqu'à un pixel de type Original
-		while(q->parent()->type() != CellType::Original)
-		{
-			q->parent(q->parent()->parent());
-		}
+        //on verife si le pixel parent est de type Original
+        //Si c'est pas le cas -> on remonte ces parents
+        //jusqu'à un pixel de type Original
+        while (q->parent()->type() != CellType::Original)
+        {
+            q->parent(q->parent()->parent());
+        }
 
+        //on verifie si le pixel et le pixel parent appartiennent a la meme forme
+        if (q->level() == p->level())
+        {
+            //on sauvegarde le chemin parcouru pour trouvez le pixel canonique
+            std::vector<SVMCell<T> *> qSave;
+            qSave.push_back(q);
 
-		//on verifie si le pixel et le pixel parent appartiennent a la meme forme
-		if(q->level() == p->level())
-		{
-			//on sauvegarde le chemin parcouru pour trouvez le pixel canonique
-			std::vector<SVMCell<T> *> qSave;
-			qSave.push_back(q);
+            //si le pixel et le pixel parent sont dans la meme forme
+            //et si le pixel et le pixel parent ne sont pas un seul et meme pixel
+            while (q->parent()->level() == q->level() && q->parent() != q) // See svm_cell.h
+            {
+                //on remonte le chemin de parents
+                q = q->parent();
+                qSave.push_back(q);
+            }
 
-			//si le pixel et le pixel parent sont dans la meme forme
-			//et si le pixel et le pixel parent ne sont pas un seul et meme pixel
-	        while (q->parent()->level() == q->level() && q->parent() != q) // See svm_cell.h
-	        {
-				//on remonte le chemin de parents
-				q = q->parent();
-				qSave.push_back(q);
-	        }
-
-			//si le pixel et le pixel parent sont un seul et meme pixel
-			if (q->parent() == q)
-			{
-				//si il est de type original on peut le prendre comme parent
-				if(q->parent()->type() == CellType::Original)
-				{
-					//on affecte au pixel courant
-					p->parent(q->parent());
-					#pragma omp parallel for
-					//et au pixels parcourus
-					for(unsigned int j=0; j < qSave.size(); j++)
-					{
-						qSave[j]->parent(q->parent());
-					}
-				}
-			//sinon le pixel et le pixel parent ne sont plus dans la meme forme
-			} else if (q->parent()->level() != q->level())
-	        {
-				//si le pixel est de type Original
-				if(q->parent()->type() == CellType::Original)
-				{
-					p->parent(q->parent());
-					#pragma omp parallel for
-					for(unsigned int j=0; j < qSave.size(); j++)
-					{
-						qSave[j]->parent(q->parent());
-					}
-				} else {
-					//sinon on remonte le chemin de parent
-					//jusqu'a un pixel de type Original
-					//et on prends celui ci comme parent
-					while(q->parent()->type() != CellType::Original)
-					{
-						q->parent(q->parent()->parent());
-					}
-					p->parent(q->parent());
-					#pragma omp parallel for
-					for(unsigned int j=0; j < qSave.size(); j++)
-					{
-						qSave[j]->parent(q->parent());
-					}
-				}
-			}
-		//sinon le pixel et le pixel parent ne sont plus dans la meme forme
-		//on affecte simplement le parent
-		} else {
-			p->parent(q->parent());
-		}
+            //si le pixel et le pixel parent sont un seul et meme pixel
+            if (q->parent() == q)
+            {
+                //si il est de type original on peut le prendre comme parent
+                if (q->parent()->type() == CellType::Original)
+                {
+                    //on affecte au pixel courant
+                    p->parent(q->parent());
+#pragma omp parallel for
+                    //et au pixels parcourus
+                    for (unsigned int j = 0; j < qSave.size(); j++)
+                    {
+                        qSave[j]->parent(q->parent());
+                    }
+                }
+                //sinon le pixel et le pixel parent ne sont plus dans la meme forme
+            }
+            else if (q->parent()->level() != q->level())
+            {
+                //si le pixel est de type Original
+                if (q->parent()->type() == CellType::Original)
+                {
+                    p->parent(q->parent());
+#pragma omp parallel for
+                    for (unsigned int j = 0; j < qSave.size(); j++)
+                    {
+                        qSave[j]->parent(q->parent());
+                    }
+                }
+                else
+                {
+                    //sinon on remonte le chemin de parent
+                    //jusqu'a un pixel de type Original
+                    //et on prends celui ci comme parent
+                    while (q->parent()->type() != CellType::Original)
+                    {
+                        q->parent(q->parent()->parent());
+                    }
+                    p->parent(q->parent());
+#pragma omp parallel for
+                    for (unsigned int j = 0; j < qSave.size(); j++)
+                    {
+                        qSave[j]->parent(q->parent());
+                    }
+                }
+            }
+            //sinon le pixel et le pixel parent ne sont plus dans la meme forme
+            //on affecte simplement le parent
+        }
+        else
+        {
+            p->parent(q->parent());
+        }
     }
 }
 
 template <typename T>
 void TOS<T>::clean()
 {
-    sortedPixels.erase(std::remove_if(sortedPixels.begin(),sortedPixels.end(),[](SVMCell<T>*cell){return cell->type() != CellType::Original;}),sortedPixels.end());
-}
-
-sf::Color typeToColor(CellType type)
-{
-    switch (type)
-    {
-    case Original:
-        return sf::Color::Red;
-    case New:
-        return sf::Color::Green;
-    case Inter2:
-    case Inter4:
-        return sf::Color::Blue;
-    }
+    sortedPixels.erase(std::remove_if(sortedPixels.begin(), sortedPixels.end(), [](SVMCell<T> *cell) { return cell->type() != CellType::Original; }), sortedPixels.end());
 }
 
 template <typename T>

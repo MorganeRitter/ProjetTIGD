@@ -13,21 +13,21 @@ class TOS
 public:
     TOS(SVMImage<T> &img);
 
-    // R comes from sort
     std::vector<SVMCell<T> *> sort();
-
     void unionFind();
     void canonize();
 
+    // remove pointers to non-origina cells
     void clean();
 
+    // draw the parenting path
     void drawParents(sf::RenderWindow &window, const sf::Vector2f &pos);
 
 private:
     SVMCell<T> *findRoot(SVMCell<T> *current);
 
     SVMImage<T> &m_image;
-    std::vector<SVMCell<T> *> sortedPixels;
+    std::vector<SVMCell<T> *> sortedPixels; // R in the article
 };
 
 #include "tos.hpp"

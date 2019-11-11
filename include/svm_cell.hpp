@@ -90,7 +90,7 @@ bool areSameVal(const SVMCell<T> &a, const SVMCell<T> &b)
         else
             return false;
     }*/
-    if(a.level() == b.level())
+    if (a.level() == b.level())
     {
         return true;
     }
