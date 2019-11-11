@@ -9,9 +9,9 @@ SVMImage<T>::SVMImage(const LibTIM::Image<T> &img) : m_original(img)
     m_width = img.getSizeX();
     m_height = img.getSizeY();
     extend();
-    std::cout << "image extended" << std::endl;
+    VERBOSE("image extended")
     interpolate();
-    std::cout << "image interpolated" << std::endl;
+    VERBOSE("image interpolated")
 }
 
 template <typename T>
@@ -53,9 +53,7 @@ void SVMImage<T>::extend()
             }
         }
     }
-    std::cout << "e_img.size() = " << e_img.size() << std::endl;
     m_image = e_img;
-    std::cout << "m_image.size() = " << m_image.size() << std::endl;
     m_width = newSizeX;
     m_height = newSizeY;
 }
@@ -70,10 +68,9 @@ void SVMImage<T>::interpolate()
     std::size_t nbCol = 2 * (n * 2 - 1) - 1;
     std::size_t nbLine = 2 * (m * 2 - 1) - 1;
     std::size_t size = (nbCol * nbLine) - 1;
-    std::cout << nbCol << " " << nbLine << std::endl;
     std::vector<SVMCell<T>*> i_img(size + 1);
 
-    std::cout << "initialized" << std::endl;
+    VERBOSE("initialized\n")
     // fill old pixels
 #pragma omp parallel for
     for (unsigned int l = 0; l < m_height; l++)
@@ -87,14 +84,12 @@ void SVMImage<T>::interpolate()
             i_img.at((l * 4) * nbCol + (c * 4)) = cell;
         }
     }
-    std::cout << "old pixels" << std::endl;
+    VERBOSE("old pixels\n")
 
     // fill in new pixels
 #pragma omp parallel for
     for (std::size_t l = 0; l < nbLine; l += 2)
     {
-        //std::cout << omp_get_num_threads() << std::endl;
-
         for (std::size_t c = (l + 2) % 4; c < nbCol; c += 4)
         {
             if (l % 4 == 2)
@@ -136,7 +131,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l * nbCol + c) = cell;
         }
     }
-    std::cout << "New pixels" << std::endl;
+    VERBOSE("New pixels\n")
 
     // fill the interpixels
 
@@ -226,7 +221,7 @@ void SVMImage<T>::interpolate()
             i_img.at(l * nbCol + c) = cell;
         }
     }
-    std::cout << "inter pixels" << std::endl;
+    VERBOSE("inter pixels\n")
 
     m_image = i_img;
     m_height = nbLine;
@@ -237,7 +232,7 @@ template <typename T>
 void SVMImage<T>::uninterpolate(TOS<T> *tree)
 {
     tree->clean();
-    std::cout << "tree is clean" << std::endl;
+    VERBOSE("tree is clean\n")
 
     // remove all non-original cells
     m_image.erase(std::remove_if(m_image.begin(),m_image.end(),[](SVMCell<T>*cell){return cell->type() != CellType::Original;}),m_image.end());
@@ -250,6 +245,7 @@ void SVMImage<T>::uninterpolate(TOS<T> *tree)
 
     m_width = m_original.getSizeX()+2;
     m_height = m_original.getSizeY()+2;
+    VERBOSE("image is clean")
 }
 
 template <typename T>

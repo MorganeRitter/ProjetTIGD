@@ -4,11 +4,11 @@ template <typename T>
 TOS<T>::TOS(SVMImage<T> &img) : m_image(img)
 {
     sortedPixels = sort();
-    std::cout << "sort" << std::endl;
+    VERBOSE("sort\n")
     unionFind();
-    std::cout << "union find" << std::endl;
+    VERBOSE("union find\n")
     canonize();
-    std::cout << "canonize" << std::endl;
+    VERBOSE("canonize")
 }
 
 template <typename T>

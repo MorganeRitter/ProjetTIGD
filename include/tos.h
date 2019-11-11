@@ -3,6 +3,7 @@
 
 #include "pqueue.h"
 #include "svm_img.h"
+#include "utils.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
